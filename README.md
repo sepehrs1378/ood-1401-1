@@ -1,8 +1,8 @@
-# ood-project
+# OOD project
 
 Spring 1401
 
-## Members:
+## Members
 
 Mohsen Dehghankar
 
