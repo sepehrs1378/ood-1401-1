@@ -25,13 +25,13 @@ source ./venv/bin/activate
 ### Run in Container
 Follow these steps:
 ```
-make run_docker
+make run-docker
 ```
 
 ### Run Local
 Follow these steps:
 ```
-make start_db
+make start-db
 make migrate
 make run
 ```
