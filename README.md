@@ -25,7 +25,6 @@ source ./venv/bin/activate
 ### Run in Container
 Follow these steps:
 ```
-make build_docker
 make run_docker
 ```
 
