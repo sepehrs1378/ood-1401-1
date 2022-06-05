@@ -5,7 +5,14 @@ from .service_request import ServiceRequest
 
 
 class ServiceAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        "name",
+        "category",
+        "number_of_requests",
+    )
+
+    def number_of_requests(self, obj):
+        return obj.requests.count()
 
 
 class ServiceCategoryAdmin(admin.ModelAdmin):

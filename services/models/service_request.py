@@ -53,7 +53,11 @@ class ServiceRequest(models.Model):
         max_length=30, choices=RequestType.choices, default=RequestType.SYSTEM_SELECTED
     )
     service = models.ForeignKey(
-        Service, blank=False, null=False, on_delete=models.CASCADE
+        Service,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name="requests",
     )
 
     def __str__(self) -> str:
