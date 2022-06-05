@@ -57,14 +57,14 @@ then go to localhost:8000/admin
 
 ## Important end-points
 ```
-/admin
-/users/register/expert
-/users/register/customer
-/users/login
-/services/request
-/services/approve/request_id
-/services/finish/request_id
-/messagin/ticket/create
-/messaging/ticket/send
-/messaging/ticket/show
+/admin --> admin page
+/users/register/expert --> register an expert user
+/users/register/customer --> register a customer user
+/users/login --> login
+/services/request --> request a new service by customer
+/services/approve/request_id --> approve a request by expert
+/services/finish/request_id --> finish a request by expert
+/messagin/ticket/create --> create a new ticket
+/messaging/ticket/send --> send a new message to ticket
+/messaging/ticket/show --> show a ticket details
 ```
