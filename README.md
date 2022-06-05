@@ -68,3 +68,11 @@ then go to localhost:8000/admin
 /messaging/ticket/send --> send a new message to ticket
 /messaging/ticket/show --> show a ticket details
 ```
+
+## Sub-system (= django apps)
+- Users
+- Messaging
+- Feedback
+- Reporting
+- Service
+- Admin (django admin is used)
