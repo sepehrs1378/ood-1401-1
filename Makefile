@@ -13,5 +13,8 @@ start-db:
 stop:
 	docker-compose stop
 
+create-superuser:
+	python manage.py ensure_it_manager --username=admin --password=admin --email=m.dehghankar@outlook.com
+
 complete-run:
-	make migrate && make run
+	make create-superuser && make migrate && make run

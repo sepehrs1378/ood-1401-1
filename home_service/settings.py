@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     "services",
     "messaging",
     "reporting",
+    "crispy_forms",
 ]
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -73,7 +76,7 @@ ROOT_URLCONF = "home_service.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "tempaltes"],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
