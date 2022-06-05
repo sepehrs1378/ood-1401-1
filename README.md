@@ -54,3 +54,17 @@ make stop
 make create-superuser
 then go to localhost:8000/admin
 ```
+
+## Important end-points
+```
+/admin
+/users/register/expert
+/users/register/customer
+/users/login
+/services/request
+/services/approve/request_id
+/services/finish/request_id
+/messagin/ticket/create
+/messaging/ticket/send
+/messaging/ticket/show
+```
