@@ -1,0 +1,17 @@
+{% extends "includes/header.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<!--Login-->
+<div class="container py-5">
+    <h1>Send Message for ticket:</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %} {{ request_form|crispy }}
+        <button class="btn btn-primary" type="submit">Send</button>
+    </form>
+    <div>{{ msg }}</div>
+</div>
+
+{% endblock %}

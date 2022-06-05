@@ -1,0 +1,56 @@
+{% extends "includes/header.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<!--Login-->
+<div class="container py-5">
+    <h1>Home Page</h1>
+
+    {% if user.is_authenticated %}
+    <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
+
+    {% if user_type == "customer" %}
+
+    <p><a href="/services/request"> Request a service </a></p>
+    <h2>Requested Services</h2>
+    {% for req in requests %}
+    <p>{{ req }}</p>
+    {% endfor %}
+
+    {% elif user_type == "expert" %}
+
+    <p>You are EXPERT. </p>
+    <h2>Assigned Services</h2>
+    {% for req in requests %}
+
+    {% if req.status == "INITIATED" %}
+    <p>{{ req }} <a href="/services/approve/{{ req.id }}"> Approve</a> </p>
+    {% elif req.status == "IN_PROGRESS" %}
+    <p>{{ req }} <a href="/services/finish/{{ req.id }}"> Finish</a> </p>
+    {% else %}
+    <p>{{ req }}</p>
+    {% endif %}
+
+    {% endfor %}
+
+
+    {% elif user_type == "expert" %}
+    {% endif %}
+
+    <h2>Tickets </h2>
+    {% for ticket in tickets %}
+    <p>{{ ticket }}<a href="/messaging/ticket/show/{{ ticket.id }}"> Show Details</a> </p>
+    {% endfor %}
+    <p><a href="/messaging/ticket/create"> Create new ticket </a></p>
+
+
+    {% else %}
+
+    <p>Welcome, new user. Please <a href="/users/login"> log in</a>.</p>
+
+    {% endif %}
+</div>
+
+{% endblock %}
