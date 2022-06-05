@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+from services.models.service_request import RequestStatus, ServiceRequest
 
 from users.models.customer import Customer
+from users.models.it_manager import ITManager
 from users.models.expert import Expert
 from .forms import CustomerRegisterForm, ExpertRegisterForm
 from django.contrib.auth import login
@@ -34,8 +36,59 @@ def register_decorator(user_type):
     return request_register
 
 
+def get_child_user(user_id):
+    customer = None
+    expert = None
+    try:
+        customer = Customer.objects.get(pk=user_id)
+    except Exception as e:
+        pass
+
+    try:
+        expert = Expert.objects.get(pk=user_id)
+    except Exception as e:
+        pass
+
+    return customer if customer else expert
+
+
+def get_related_requests(user):
+    user = get_child_user(user)
+    if user is None:
+        return []
+    elif isinstance(user, Customer):
+        return list(ServiceRequest.objects.filter(customer=user))
+    else:
+        return list(ServiceRequest.objects.filter(expert=user))
+
+
 def home_page(request):
-    return render(request=request, template_name="index.html")
+    customer = None
+    expert = None
+    requests = []
+    if request.user and request.user.is_authenticated:
+        try:
+            customer = Customer.objects.get(pk=request.user.id)
+        except Exception as e:
+            pass
+
+        try:
+            expert = Expert.objects.get(pk=request.user.id)
+        except Exception as e:
+            pass
+
+        requests = get_related_requests(request.user.id)
+
+    return render(
+        request=request,
+        template_name="index.html",
+        context={
+            "user_type": "expert" if expert else "customer",
+            "requests": requests,
+        }
+        if customer or expert
+        else {},
+    )
 
 
 def login_request(request):

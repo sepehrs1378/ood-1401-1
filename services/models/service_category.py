@@ -14,6 +14,8 @@ class ServiceCategory(models.Model):
     )
 
     def __str__(self) -> str:
-        return (
-            f"{self.name} --> {self.parent if self.parent is not None else self.type}"
-        )
+        return f"{self.name} --> {self.parent}" if self.parent else f"{self.name}"
+
+    class Meta:
+        verbose_name = "ServiceCategory"
+        verbose_name_plural = "ServiceCategories"

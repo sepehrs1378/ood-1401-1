@@ -23,4 +23,5 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("users/", include("users.view.urls")),
     path("", RedirectView.as_view(url="users/login")),
+    path("services/", include("services.view.urls")),
 ]

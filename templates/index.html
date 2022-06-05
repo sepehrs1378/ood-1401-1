@@ -10,8 +10,38 @@
 
     {% if user.is_authenticated %}
     <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
+
+    {% if user_type == "customer" %}
+
+    <p><a href="/services/request"> Request a service </a></p>
+    <p>Requested Services:</p>
+    {% for req in requests %}
+    <p>{{ req }}</p>
+    {% endfor %}
+
+    {% elif user_type == "expert" %}
+
+    <p>You are EXPERT. </p>
+    <p>Assigned Services:</p>
+    {% for req in requests %}
+
+    {% if req.status == "INITIATED" %}
+    <p>{{ req }} <a href="/services/approve/{{ req.id }}"> Approve</a> </p>
+    {% elif req.status == "IN_PROGRESS" %}
+    <p>{{ req }} <a href="/services/finish/{{ req.id }}"> Finish</a> </p>
     {% else %}
-    <p>Welcome, new user. Please <a href="/users/login"> log in </a>.</p>
+    <p>{{ req }}</p>
+    {% endif %}
+
+    {% endfor %}
+
+
+    {% elif user_type == "expert" %}
+    {% endif %}
+    {% else %}
+
+    <p>Welcome, new user. Please <a href="/users/login"> log in</a>.</p>
+
     {% endif %}
 </div>
 

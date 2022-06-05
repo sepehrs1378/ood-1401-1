@@ -55,3 +55,6 @@ class ServiceRequest(models.Model):
     service = models.ForeignKey(
         Service, blank=False, null=False, on_delete=models.CASCADE
     )
+
+    def __str__(self) -> str:
+        return f"\nrequest: {self.service} \nfrom: {self.customer} \nexpert: {self.expert} \nstatus: {self.status} \t"
