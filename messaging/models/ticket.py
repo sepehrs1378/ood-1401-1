@@ -27,6 +27,9 @@ class Ticket(models.Model):
         max_length=30, choices=TicketStatus.choices, default=TicketStatus.CREATED
     )
 
+    def __str__(self) -> str:
+        return f"Topic: {self.topic} | status: {self.status}"
+
 
 class TicketMessage(models.Model):
     """
@@ -41,3 +44,6 @@ class TicketMessage(models.Model):
     file = models.FileField()
     time = models.DateField(default=now)
     sender = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"message: {self.text}"

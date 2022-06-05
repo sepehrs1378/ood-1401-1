@@ -26,9 +26,7 @@ def request_service(request):
                 "request_type": RequestType.CUSTOMER_SELECTED,
             },
         )
-        print("mohsen", form.fields["customer"])
         if form.is_valid():
-            print("salam", "form is valid")
             request = form.save()
             msg = "request sent"
             return redirect("/users")
@@ -36,7 +34,6 @@ def request_service(request):
     form = ServiceRequestForm(
         initial={"customer": user.id, "request_type": RequestType.CUSTOMER_SELECTED},
     )
-    print(form.fields["customer"])
     return render(
         request=request,
         template_name="services/request_service.html",

@@ -57,4 +57,4 @@ class ServiceRequest(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"\nrequest: {self.service} \nfrom: {self.customer} \nexpert: {self.expert} \nstatus: {self.status} \t"
+        return f"\nrequest: {self.service} |\nfrom: {self.customer} |\nexpert: {self.expert} |\nstatus: {self.status} \t"

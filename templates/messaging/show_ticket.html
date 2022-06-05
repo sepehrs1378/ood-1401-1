@@ -1,0 +1,18 @@
+{% extends "includes/header.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<!--Login-->
+<div class="container py-5">
+    <h1>Ticket</h1>
+    <p>{{ ticket }}</p>
+    <p>Messages:</p>
+    {% for msg in ticket_messages %}
+    <p>{{ msg }}</p>
+    {% endfor %}
+    <p><a href="/messaging/ticket/send/{{ ticket.id }}">Send new message</a></p>
+</div>
+
+{% endblock %}

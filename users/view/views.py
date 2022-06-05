@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from messaging.models.ticket import Ticket
 from services.models.service_request import RequestStatus, ServiceRequest
 
 from users.models.customer import Customer
@@ -62,6 +63,13 @@ def get_related_requests(user):
         return list(ServiceRequest.objects.filter(expert=user))
 
 
+def get_related_tickets(user):
+    try:
+        return list(Ticket.objects.filter(creator=user))
+    except Exception as e:
+        return []
+
+
 def home_page(request):
     customer = None
     expert = None
@@ -78,6 +86,7 @@ def home_page(request):
             pass
 
         requests = get_related_requests(request.user.id)
+        tickets = get_related_tickets(request.user)
 
     return render(
         request=request,
@@ -85,6 +94,7 @@ def home_page(request):
         context={
             "user_type": "expert" if expert else "customer",
             "requests": requests,
+            "tickets": tickets,
         }
         if customer or expert
         else {},
