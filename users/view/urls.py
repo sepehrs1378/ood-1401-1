@@ -1,5 +1,4 @@
 from django.urls import path
-
 from users.models.customer import Customer
 from users.models.expert import Expert
 from . import views
