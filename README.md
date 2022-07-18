@@ -65,7 +65,7 @@ then go to localhost:8000/admin
 /messaging/ticket/show --> show a ticket details
 ```
 
-## Sub-system (= django apps)
+## Sub-systems (= django apps)
 - Users
 - Messaging
 - Feedback
