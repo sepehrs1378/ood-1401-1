@@ -22,6 +22,10 @@ body {
     border-radius: 8px;
 }
 
+.btn-dark:hover {
+    color: #7B809A;
+}
+
 .btn-gray {
     font-weight: bold;
     color: black;
@@ -31,6 +35,10 @@ body {
     /* drop-shadow-grey */
     box-shadow: 0px 2px 6px rgba(151, 172, 198, 0.25);
     border-radius: 8px;
+}
+
+.btn-gray:hover {
+    color: #7B809A;
 }
 
 nav {
