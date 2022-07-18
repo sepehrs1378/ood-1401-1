@@ -16,6 +16,7 @@ class Expert(Role):
         on_delete=models.PROTECT,
         default=4,
     )
+    status = models.BooleanField(default=True, blank=False, null=False)
 
     class Meta:
         verbose_name = "Expert"
