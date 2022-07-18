@@ -1,19 +1,22 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from services.models.service import Service
 from users.models.customer import Customer
 from users.models.expert import Expert
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Row, Div, Field, Column
 
+from users.models.user import User
 
-class CustomerRegisterForm(UserCreationForm):
+
+class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    phone_number = forms.CharField(max_length=10, required=True)
+    phone_number = forms.CharField(max_length=11, required=True)
     name = forms.CharField(required=True)
 
     class Meta:
-        model = Customer
+        model = User
         fields = (
             "username",
             "name",
@@ -21,8 +24,27 @@ class CustomerRegisterForm(UserCreationForm):
             "phone_number",
             "password1",
             "password2",
-            "address",
         )
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomerRegisterForm(UserRegisterForm):
+    address = forms.CharField(
+        label="",
+        strip=False,
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": "محل سکونت",
+                "style": "text-align: right; direction: rtl;",
+            }
+        ),
+        help_text=None,
+    )
+
+    class Meta(UserRegisterForm.Meta):
+        fields = UserRegisterForm.Meta.fields + ("address",)
 
     def save(self, commit=True):
         user = super(
@@ -30,6 +52,8 @@ class CustomerRegisterForm(UserCreationForm):
             self,
         ).save(commit=False)
         user.email = self.cleaned_data["email"]
+        role = Customer.objects.create(address=self.cleaned_data["address"])
+        user.role = role
         if commit:
             user.save()
         return user
@@ -42,21 +66,18 @@ class CustomerRegisterForm(UserCreationForm):
         self.fields["phone_number"].widget.attrs["placeholder"] = "شماره تلفن همراه"
         self.fields["password1"].widget.attrs["placeholder"] = "رمز عبور"
         self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور"
-        self.fields["address"].widget.attrs["placeholder"] = "آدرس محل سکونت"
         self.fields["username"].label = ""
         self.fields["name"].label = ""
         self.fields["email"].label = ""
         self.fields["phone_number"].label = ""
         self.fields["password1"].label = ""
         self.fields["password2"].label = ""
-        self.fields["address"].label = ""
         self.fields["username"].help_text = None
         self.fields["name"].help_text = None
         self.fields["email"].help_text = None
         self.fields["phone_number"].help_text = None
         self.fields["password1"].help_text = None
         self.fields["password2"].help_text = None
-        self.fields["address"].help_text = None
         self.fields["username"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
@@ -71,9 +92,6 @@ class CustomerRegisterForm(UserCreationForm):
             "style"
         ] = "text-align: right; direction: rtl;"
         self.fields["password2"].widget.attrs[
-            "style"
-        ] = "text-align: right; direction: rtl;"
-        self.fields["address"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
         self.helper = FormHelper(self)
@@ -106,20 +124,12 @@ class CustomerRegisterForm(UserCreationForm):
         )
 
 
-class ExpertRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    phone_number = forms.CharField(max_length=10, required=True)
-    name = forms.CharField(required=True)
+class ExpertRegisterForm(UserRegisterForm):
+    document = forms.FileField()
+    expertise = forms.ModelChoiceField(queryset=Service.objects.all(), required=True)
 
-    class Meta:
-        model = Expert
-        fields = (
-            "username",
-            "name",
-            "email",
-            "phone_number",
-            "password1",
-            "password2",
+    class Meta(UserRegisterForm.Meta):
+        fields = UserRegisterForm.Meta.fields + (
             "expertise",
             "document",
         )
@@ -129,6 +139,11 @@ class ExpertRegisterForm(UserCreationForm):
             ExpertRegisterForm,
             self,
         ).save(commit=False)
+        role = Expert.objects.create(
+            expertise=self.cleaned_data["expertise"],
+            document=self.cleaned_data["document"],
+        )
+        user.role = role
         user.email = self.cleaned_data["email"]
         if commit:
             user.save()

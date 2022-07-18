@@ -20,4 +20,4 @@ complete-run:
 	make create-superuser && make migrate && make run
 
 clear-db:
-	docker-compose stop app-db && docker-compose down app-db
+	docker-compose stop && docker-compose down -v

@@ -4,14 +4,19 @@ from users.models.expert import Expert
 from . import views
 
 app_name = "users"
+user_catalogue = views.UserCatalogue()
 
 urlpatterns = [
     path(
         "register/customer",
-        views.register_decorator(Customer),
+        user_catalogue.register_decorator(Customer),
         name="register-customer",
     ),
-    path("register/expert", views.register_decorator(Expert), name="register-expert"),
-    path("login", views.login_request, name="login"),
-    path("", views.home_page, name="home"),
+    path(
+        "register/expert",
+        user_catalogue.register_decorator(Expert),
+        name="register-expert",
+    ),
+    path("login", user_catalogue.login_request, name="login"),
+    path("", user_catalogue.home_page, name="home"),
 ]

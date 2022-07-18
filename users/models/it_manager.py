@@ -1,7 +1,7 @@
-from .user import User
+from users.models.role import Role
 
 
-class ITManager(User):
+class ITManager(Role):
     """
     This class represents an ITManager user
     """

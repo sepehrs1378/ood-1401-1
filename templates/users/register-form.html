@@ -22,7 +22,7 @@
         </div>
 
         <div class="my-4">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %} {% crispy register_form %}
                 <!-- <button class="btn btn-dark py-2 mt-2" style="width: 10%;" type="submit">بعدی</button> -->
             </form>

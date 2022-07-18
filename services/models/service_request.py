@@ -1,8 +1,8 @@
 from django.db import models
-from users.models.customer import Customer
-from users.models.expert import Expert
 from services.models.service import Service
 from django.utils.translation import gettext as _
+
+from users.models.user import User
 
 
 class RequestStatus(models.TextChoices):
@@ -43,14 +43,26 @@ class ServiceRequest(models.Model):
     """
 
     customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, blank=False, null=False
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        related_name="service_customer",
     )
-    expert = models.ForeignKey(Expert, on_delete=models.CASCADE)
+    expert = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="service_expert",
+    )
     status = models.CharField(
-        max_length=30, choices=RequestStatus.choices, default=RequestStatus.INITIATED
+        max_length=30,
+        choices=RequestStatus.choices,
+        default=RequestStatus.INITIATED,
     )
     request_type = models.CharField(
-        max_length=30, choices=RequestType.choices, default=RequestType.SYSTEM_SELECTED
+        max_length=30,
+        choices=RequestType.choices,
+        default=RequestType.SYSTEM_SELECTED,
     )
     service = models.ForeignKey(
         Service,

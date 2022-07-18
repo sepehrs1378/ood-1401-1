@@ -1,9 +1,9 @@
 from services.models.service import Service
-from .user import User
+from users.models.role import Role
 from django.db import models
 
 
-class Expert(User):
+class Expert(Role):
     """
     An Expert is a User who provides services
     """

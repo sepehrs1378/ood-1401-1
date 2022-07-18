@@ -6,7 +6,6 @@ from users.models.expert import Expert
 from services.models.service_request import RequestStatus, ServiceRequest
 
 from services.models.service_request import RequestType
-from users.view.views import get_child_user
 from .forms import ServiceRequestForm, ServiceRequestFromSystemForm
 
 
@@ -134,12 +133,12 @@ def finish_request(request, request_id):
 
 
 def experts_list(request):
-    child_user = get_child_user(request.user)
+    user_type = request.user.get_user_type_str()
     return render(
         request=request,
         template_name="services/experts-list.html",
         context={
             "experts": [],
-            "user_type": "expert" if isinstance(child_user, Expert) else "customer",
+            "user_type": user_type,
         },
     )
