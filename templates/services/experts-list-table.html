@@ -11,46 +11,34 @@
             </tr>
         </thead>
         <tbody>
+            {% for expert in experts %}
             <tr class="list-entry">
                 <td>
                     <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
                         ...
                     </button>
                     <div class="dropdown-menu complete-rtl">
+                        {% if expert.role.status %}
                         <a class="dropdown-item" href="/services/request/7">درخواست سرویس</a>
-                        <a class="dropdown-item" href="#">پیام به متخصص</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="#">جزئیات</a>
                     </div>
                 </td>
                 <td>
+                    {% if expert.role.status %}
                     <button type="button" class="btn btn-outline-success status-entry">آنلاین</button>
+                    {% else %}
+                    <button type="button" class="btn btn-outline-danger status-entry">آفلاین</button>
+                    {% endif %}
                 </td>
                 <td>3/5</td>
-                <td>تعمیر کولر</td>
-                <td>آقای متخصص</td>
+                <td>{{ expert.role.expertise }}</td>
+                <td>{{ expert.name }}</td>
                 <td>
-                    #1234
+                    #{{ expert.id }}
                 </td>
             </tr>
-            <tr class=" list-entry">
-                <td>
-                    <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
-                        ...
-                    </button>
-                    <div class="dropdown-menu complete-rtl">
-                        <a class="dropdown-item" href="/services/request/7">درخواست سرویس</a>
-                        <a class="dropdown-item" href="#">پیام به متخصص</a>
-                    </div>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-outline-danger status-entry">آفلاین</button>
-                </td>
-                <td>4.5/5</td>
-                <td>قالی شویی</td>
-                <td>آقای متخصص</td>
-                <td>
-                    #4213
-                </td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
