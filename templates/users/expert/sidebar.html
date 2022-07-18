@@ -9,12 +9,20 @@
         <!-- <button type="button" class="btn btn-outline-success status">آنلاین</button> -->
 
         <div class="btn-group dropleft status" dir="ltr">
+            {% if user.role.status %}
             <button type="button" class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
                 آنلاین
             </button>
+            {% else %}
+            <button type="button" class="btn btn-outline-danger dropdown-toggle" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                آفلاین
+            </button>
+            {% endif %}
+
             <div class="dropdown-menu">
-                <a class="dropdown-item" style="color: black;" href="#">تغییر وضعیت</a>
+                <a class="dropdown-item" style="color: black;" href="/users/expert/change-status">تغییر وضعیت</a>
             </div>
         </div>
     </div>

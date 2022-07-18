@@ -17,6 +17,11 @@ urlpatterns = [
         user_catalogue.register_decorator(Expert),
         name="register-expert",
     ),
+    path(
+        "expert/change-status",
+        user_catalogue.change_expert_status,
+        name="change_status",
+    ),
     path("login", user_catalogue.login_request, name="login"),
     path("", user_catalogue.home_page, name="home"),
 ]
