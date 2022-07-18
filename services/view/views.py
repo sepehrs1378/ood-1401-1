@@ -16,13 +16,11 @@ class ServiceCatalogue:
     # Expert is chosen by customer
     def request_service_from_expert(self, request, expert_id):
         msg = ""
+        expert_role = Expert.objects.filter(pk=expert_id).first()
+        expert = User.objects.filter(role=expert_role).first() if expert_role else None
         if request.method == "POST":
             form = ServiceRequestForm(
-                request.POST,
-                initial={
-                    "customer": request.user.id,
-                    "request_type": RequestType.CUSTOMER_SELECTED,
-                },
+                request=request.POST, expert=expert, customer=request.user
             )
             if form.is_valid():
                 request = form.save()
@@ -30,13 +28,9 @@ class ServiceCatalogue:
                 return redirect("/users")
             msg = form.errors
         else:
-            form = ServiceRequestForm(
-                initial={
-                    "customer": request.user.id,
-                    "request_type": RequestType.CUSTOMER_SELECTED,
-                    "expert": expert_id,
-                },
-            )
+            form = ServiceRequestForm(expert=expert, customer=request.user)
+            if not expert:
+                msg = "Invalid expert selected"
         return render(
             request=request,
             template_name="services/request-service.html",
@@ -44,6 +38,7 @@ class ServiceCatalogue:
                 "request_form": form,
                 "msg": msg,
                 "request_type": RequestType.CUSTOMER_SELECTED,
+                "expert": expert,
             },
         )
 

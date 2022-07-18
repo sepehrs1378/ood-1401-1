@@ -15,7 +15,7 @@
             {% if request_type == "CUSTOMER_SELECTED" %}
             <p class="sub-color">
                 لطفا نوع سرویس مدنظر خود را از متخصص
-                {{ request_form.expert.name }}
+                <span style="color: black; font-weight: bold;">{{ expert.name }}</span>
                 ، از بین دسته‌های زیر انتخاب کنید.
             </p>
             {% else %}
@@ -25,6 +25,12 @@
             </p>
             {% endif %}
         </div>
+
+        {% if msg %}
+        <div class="alert alert-danger" style="direction: ltr; text-align: left">
+            {{ msg }}
+        </div>
+        {% endif %}
 
         <div class="d-flex justify-content-between">
 
@@ -44,7 +50,10 @@
             {% endfor %}
             {% endif %}
 
+            {% if request_type == "CUSTOMER_SELECTED" %}
+            {% else %}
             {% include 'services/tree-view.html' %}
+            {% endif %}
         </div>
     </div>
 </div>
