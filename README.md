@@ -1,17 +1,13 @@
 # OOD project
 
-Spring 1401
-
+Spring 1401\
 Team 1
 
 ## Members
 
-Mohsen Dehghankar
-
-Sajjad Reyhani
-
-Seyyed Mahdi Faghih
-
+Mohsen Dehghankar\
+Sajjad Reyhani\
+Seyyed Mahdi Faghih\
 Sepehr Safari
 
 ## Getting Started
