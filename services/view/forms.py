@@ -47,6 +47,9 @@ class ServiceRequestFromSystemForm(forms.Form):
         super(ServiceRequestFromSystemForm, self).__init__(*args, **kwargs)
         self.fields["service"].label = "سرویس انتخاب شده"
         self.fields["service"].disabled = True
+        self.fields["service"].widget.attrs[
+            "style"
+        ] = "text-align: left; direction: ltr;"
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
