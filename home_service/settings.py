@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "messaging",
     "reporting",
     "crispy_forms",
+    "polymorphic",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -152,4 +153,5 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads/")
+MEDIA_URL = "uploads/"
 LOGOUT_REDIRECT_URL = "/"

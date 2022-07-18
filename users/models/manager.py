@@ -1,7 +1,7 @@
-from .user import User
+from users.models.role import Role
 
 
-class Manager(User):
+class Manager(Role):
     """
     This class represents a Manager of the system
     """

@@ -1,8 +1,8 @@
-from .user import User
+from users.models.role import Role
 from django.db import models
 
 
-class Customer(User):
+class Customer(Role):
     """
     A Customer is a User who wants to get services
     """

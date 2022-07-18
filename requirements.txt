@@ -18,3 +18,4 @@ sqlparse==0.4.2
 tomli==2.0.1
 typing-extensions==4.2.0
 zipp==3.8.0
+django-polymorphic
