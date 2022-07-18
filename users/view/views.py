@@ -79,3 +79,15 @@ class UserCatalogue:
             template_name="users/login.html",
             context={"login_form": form, "msg": msg},
         )
+
+    def change_expert_status(self, request):
+        if (
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.user.role, Expert)
+        ):
+            user_role = request.user.role
+            user_role.status = not user_role.status
+            user_role.save()
+
+        return redirect("/users")
