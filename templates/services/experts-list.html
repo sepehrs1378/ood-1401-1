@@ -8,21 +8,18 @@
 
 <div class="main-box">
     <!-- Navigation -->
-    {% if user_type == "customer" %}
     <div class="navigation complete-rtl">
-        خانه / صفحه مشتری / درخواست های من
+        خانه / متخصصان
     </div>
+    {% if user_type == "customer" %}
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
         {% include 'users/customer/sidebar.html' %}
-        {% include 'users/customer/mainpage.html' %}
+        {% include 'services/experts-list-table.html' %}
     </div>
     {% else %}
-    <div class="navigation complete-rtl">
-        خانه / صفحه متخصص / درخواست های من
-    </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
         {% include 'users/expert/sidebar.html' %}
-        {% include 'users/expert/mainpage.html' %}
+        {% include 'services/experts-list-table.html' %}
     </div>
     {% endif %}
 </div>

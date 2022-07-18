@@ -32,8 +32,8 @@ class RequestType(models.TextChoices):
     Type of Service Request
     """
 
-    CUSTOMER_SELECTED = "CUSTOMER_SELECTED", _("Customer selects a specific expert")
-    SYSTEM_SELECTED = "SYSTEM_SELECTED", _("System recommends the service")
+    CUSTOMER_SELECTED = "CUSTOMER_SELECTED", _("متخصص توسط مشتری انتخاب شده است")
+    SYSTEM_SELECTED = "SYSTEM_SELECTED", _("متخصص توسط سیستم پیشنهاد داده شده است")
 
 
 class ServiceRequest(models.Model):

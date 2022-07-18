@@ -1,18 +1,32 @@
-<!--Navbar-->
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
-    <a class="navbar-brand" href="/">Home Service System</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
-        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-expand-md justify-content-center"
+    style="padding-left: 100px; padding-right: 100px; padding-top: 20px; padding-bottom: 20px;">
+    <a class="navbar-brand" href="/" style="font-weight: bold;">خدمات در منزل</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
+
+    <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarSupportedContent">
+        <ul class="navbar-nav mx-auto text-center d-flex justify-content-between" style="width: 40%;">
             <li class="nav-item">
-                <a class="nav-link" href="">About</a>
+                <a class="nav-link active" href="#">درباره ما</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                <a class="nav-link active" href="#">تماس با ما</a>
+            </li>
+            <li class="nav-item">
+                {% if request.user.is_authenticated %}
+                <a class="nav-link active" href="/services/experts/list">متخصصین</a>
+                {% else %}
+                <a class="nav-link active" href="/">متخصصین</a>
+                {% endif %}
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">خدمات</a>
             </li>
         </ul>
     </div>
+    <a href="/users/login" role="button" class="btn btn-pink">
+        ورود یا ثبت‌ نام
+    </a>
 </nav>

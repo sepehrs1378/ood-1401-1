@@ -1,0 +1,50 @@
+{% load crispy_forms_tags %}
+
+<!--Register-->
+<div class="container w-50 form-container mt-0">
+    <div class="form-header">
+        {% if request_type == "CUSTOMER_SELECTED" %}
+        <h3>ثبت درخواست جدید از متخصص</h3>
+        {% else %}
+        <h3>ثبت درخواست جدید در سامانه</h3>
+        {% endif %}
+    </div>
+    <div class="form-body form-link complete-rtl">
+        <div class="my-3">
+            <h3>انتخاب نوع سرویس</h3>
+            {% if request_type == "CUSTOMER_SELECTED" %}
+            <p class="sub-color">
+                لطفا نوع سرویس مدنظر خود را از متخصص
+                {{ request_form.expert.name }}
+                ، از بین دسته‌های زیر انتخاب کنید.
+            </p>
+            {% else %}
+            <p class="sub-color">
+                لطفا نوع سرویس مدنظر خود را از
+                بین دسته‌های زیر انتخاب کنید.
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="d-flex justify-content-between">
+
+            <div class="my-4">
+                <form method="POST">
+                    {% csrf_token %} {% crispy request_form %}
+                </form>
+            </div>
+
+            {% if request_form.errors %}
+            {% for field in form %}
+            {% for error in field.errors %}
+            <div class="alert alert-danger">
+                {{ error|escape }}
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+
+            {% include 'services/tree-view.html' %}
+        </div>
+    </div>
+</div>
