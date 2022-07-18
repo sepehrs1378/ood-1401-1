@@ -1,27 +1,51 @@
 from dataclasses import field
+from http import server
+from os import stat
 from django import forms
 
-from services.models.service_request import RequestType, ServiceRequest
+from services.models.service_request import RequestStatus, RequestType, ServiceRequest
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit, Row, Div, Field, Column
 from services.models.service import Service
+from users.models import customer
 from users.models.expert import Expert
+from users.models.user import User
 
 
-class ServiceRequestForm(forms.ModelForm):
+class ServiceRequestForm(forms.Form):
+    """
+    A Service request created by customer for a specific expert
+    """
+
+    service = forms.ModelChoiceField(queryset=Service.objects.all())
+
     class Meta:
-        model = ServiceRequest
-        fields = ["expert", "service", "request_type", "customer"]
+        fields = ["service"]
 
-    def __init__(self, *args, **kwargs):
-        super(ServiceRequestForm, self).__init__(*args, **kwargs)
-        self.fields["customer"].widget.attrs["readonly"] = True
-        self.fields["request_type"].widget.attrs["readonly"] = True
+    def save(self):
+        request = ServiceRequest.objects.create(
+            customer=self.customer,
+            expert=self.expert,
+            status=RequestStatus.WAIT_FOR_EXPERT_APPROVAL,
+            request_type=RequestType.CUSTOMER_SELECTED,
+            service=self.cleaned_data["service"],
+        )
+        return request
+
+    def __init__(self, expert, customer, request=None, **kwargs):
+        super(ServiceRequestForm, self).__init__(request, **kwargs)
+
+        self.expert = expert
+        self.customer = customer
+
         self.fields["service"].widget.attrs["placeholder"] = "انتخاب سرویس"
         self.fields["service"].label = "سرویس"
         self.fields["service"].help_text = None
-        expert = Expert.objects.filter(pk=kwargs["initial"]["expert"]).first()
-        self.fields["service"].queryset = Service.objects.filter(pk=expert.expertise.id)
+
+        if expert:
+            self.fields["service"].queryset = Service.objects.filter(
+                pk=expert.role.expertise.id
+            )
 
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
