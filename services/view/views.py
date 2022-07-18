@@ -1,10 +1,13 @@
+import re
 from django.shortcuts import render, redirect
+from services.models.service import Service
 from users.models.customer import Customer
 from users.models.expert import Expert
 from services.models.service_request import RequestStatus, ServiceRequest
 
 from services.models.service_request import RequestType
-from .forms import ServiceRequestForm
+from users.view.views import get_child_user
+from .forms import ServiceRequestForm, ServiceRequestFromSystemForm
 
 
 def get_customer(user_id):
@@ -15,7 +18,8 @@ def get_expert(user_id):
     return Expert.objects.get(pk=user_id)
 
 
-def request_service(request):
+# Expert is chosen by customer
+def request_service_from_expert(request, expert_id):
     msg = ""
     user = get_customer(request.user.id)
     if request.method == "POST":
@@ -31,13 +35,65 @@ def request_service(request):
             msg = "request sent"
             return redirect("/users")
         msg = form.errors
-    form = ServiceRequestForm(
-        initial={"customer": user.id, "request_type": RequestType.CUSTOMER_SELECTED},
-    )
+    else:
+        form = ServiceRequestForm(
+            initial={
+                "customer": user.id,
+                "request_type": RequestType.CUSTOMER_SELECTED,
+                "expert": expert_id,
+            },
+        )
     return render(
         request=request,
-        template_name="services/request_service.html",
-        context={"request_form": form, "msg": msg},
+        template_name="services/request-service.html",
+        context={
+            "request_form": form,
+            "msg": msg,
+            "request_type": RequestType.CUSTOMER_SELECTED,
+        },
+    )
+
+
+# Expert is chosen by system
+def request_service_from_system(request):
+    msg = ""
+    user = get_customer(request.user.id)
+    service_id = request.GET.get("service_id", Service.objects.first().id)
+    if request.method == "POST":
+        form = ServiceRequestFromSystemForm(
+            request.POST,
+            initial={
+                "service": service_id,
+            },
+        )
+        if form.is_valid():
+            service_request = form.save()
+            msg = "request sent"
+            return redirect(f"/services/request/finding/{str(service_request.id)}")
+        msg = form.errors
+    else:
+        form = ServiceRequestFromSystemForm(
+            initial={
+                "service": service_id,
+            },
+        )
+    return render(
+        request=request,
+        template_name="services/request-service.html",
+        context={
+            "request_form": form,
+            "msg": msg,
+            "request_type": RequestType.SYSTEM_SELECTED,
+        },
+    )
+
+
+def finding_expert(request, service_request_id):
+    service_request = ServiceRequest.objects.filter(pk=int(service_request_id)).first()
+    return render(
+        request=request,
+        template_name="services/finding-expert.html",
+        context={"request_id": service_request_id, "service_request": service_request},
     )
 
 
@@ -75,3 +131,15 @@ def finish_request(request, request_id):
             return redirect("/users")
     else:
         return redirect("/users")
+
+
+def experts_list(request):
+    child_user = get_child_user(request.user)
+    return render(
+        request=request,
+        template_name="services/experts-list.html",
+        context={
+            "experts": [],
+            "user_type": "expert" if isinstance(child_user, Expert) else "customer",
+        },
+    )

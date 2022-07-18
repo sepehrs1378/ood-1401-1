@@ -1,0 +1,43 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 16px;
+
+    width: 19%;
+    color: white;
+
+
+    /* Gradients/Black */
+    background: linear-gradient(180deg, #3E3D45 0%, #202020 100%);
+    border-radius: 12px;
+}
+
+.line-border {
+    /* line */
+
+    width: 100%;
+    height: 0px;
+
+    /* Linear/White */
+    border: 1px solid #58585E;
+}
+
+.status {
+    height: 35px;
+}
+
+.profile-image {
+    background: url(image.png);
+
+    /* Linear/White */
+    border: 1px solid #FFFFFF;
+    border-radius: 40px;
+}
+
+.sidebar-item:hover {
+    background: #4F4F52;
+    border-radius: 4px;
+    cursor: pointer;
+}

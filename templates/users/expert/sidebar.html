@@ -1,0 +1,53 @@
+{% load static %}
+
+<div class="sidebar no-link">
+    <div class="container py-3 d-flex justify-content-between align-items-center">
+        <div class="profile-image">
+            <img src="{% static 'icons/account.svg' %}" />
+        </div>
+        <div class="">{{ user.name }}</div>
+        <!-- <button type="button" class="btn btn-outline-success status">آنلاین</button> -->
+
+        <div class="btn-group dropleft status" dir="ltr">
+            <button type="button" class="btn btn-outline-success dropdown-toggle" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                آنلاین
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">تغییر وضعیت</a>
+            </div>
+        </div>
+    </div>
+    <div class="line-border"></div>
+    <div class="container py-3 d-flex align-items-center sidebar-item">
+        <span class="material-symbols-outlined">
+            view_timeline
+        </span>
+        <div class="px-4"><a href="/users">درخواست های من</a></div>
+    </div>
+    <div class="container py-3 d-flex align-items-center sidebar-item">
+        <span class="material-symbols-outlined">
+            person
+        </span>
+        <div class="px-4">صفحه پروفایل</div>
+    </div>
+    <div class="container py-3 d-flex align-items-center sidebar-item">
+        <span class="material-symbols-outlined">
+            mail
+        </span>
+        <div class="px-4">جعبه پیام‌ها <span class="badge badge-danger">9</span></div>
+    </div>
+    <div class="line-border"></div>
+    <div class="container py-3 d-flex align-items-center sidebar-item">
+        <span class="material-symbols-outlined">
+            logout
+        </span>
+        <div class="px-4 no-link"><a href="{% url 'logout' %}">خروج از حساب</a></div>
+    </div>
+    <div class="container py-3 d-flex align-items-center sidebar-item">
+        <span class="material-symbols-outlined">
+            help
+        </span>
+        <div class="px-4">پشتیبانی</div>
+    </div>
+</div>

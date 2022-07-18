@@ -1,0 +1,41 @@
+{% load crispy_forms_tags %}
+
+<!--Register-->
+<div class="container w-50 form-container">
+    <div class="form-header">
+        {% if user_type == 'Customer' %}
+        <h3>ثبت نام مشتری</h3>
+        {% else %}
+        <h3>ثبت نام متخصص</h3>
+        {% endif %}
+    </div>
+    <div class="form-body form-link complete-rtl">
+        <div class="my-3">
+            {% if user_type == 'Customer' %}
+            <h3>اطلاعات ثبت نام مشتری</h3>
+            {% else %}
+            <h3>اظلاعات ثبت نام متخصص</h3>
+            {% endif %}
+            <p class="sub-color">
+                این اطلاعات به صورت امن در سامانه محفوظ می مانند.
+            </p>
+        </div>
+
+        <div class="my-4">
+            <form method="POST">
+                {% csrf_token %} {% crispy register_form %}
+                <!-- <button class="btn btn-dark py-2 mt-2" style="width: 10%;" type="submit">بعدی</button> -->
+            </form>
+        </div>
+
+        {% if register_form.errors %}
+        {% for field in form %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger">
+            {{ error|escape }}
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>

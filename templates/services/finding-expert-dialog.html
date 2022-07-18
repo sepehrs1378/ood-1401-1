@@ -1,0 +1,49 @@
+{% load crispy_forms_tags %}
+
+<!--Register-->
+<div class="container w-50 form-container mt-0">
+    <div class="form-header">
+        {% if service_request.type == "CUSTOMER_SELECTED" %}
+        <h3>ثبت درخواست جدید از متخصص</h3>
+        {% else %}
+        <h3>ثبت درخواست جدید در سامانه</h3>
+        {% endif %}
+    </div>
+    <div class="form-body form-link complete-rtl">
+        {% if service_request.status == "FINDING_EXPERT" %}
+        <div class="my-3">
+            <h3>در حال پیدا کردن متخصص هستیم...</h3>
+            <p class="sub-color">
+                درخواست شما به متخصصان ارسال شد، در صورت تایید توسط متخصص به اطلاعتان می رسانیم.
+            </p>
+        </div>
+        {% else %}
+        <div class="my-3">
+            <h3>متخصص پیدا شد!</h3>
+            <p class="sub-color">
+                متخصص زیر درخواست شما را پذیرفته است، در صورت رد کردن، متخصصی دیگر به شما پیشنهاد خواهد شد.
+            </p>
+        </div>
+        <div class="w-100 expert-card-wrapper">
+            <div class="expert-card">
+                <h5 style="font-weight: bold;">{{ service_request.expert.name }}</h5>
+                <div class="card-item-text py-2">
+                    دارای ۴ سال تجربه
+                </div>
+                <div class="card-item-text py-4">
+                    میانگین امتیاز ۴ از ۵
+                </div>
+                <a href="#">
+                    <div style="font-weight: bold;">
+                        اطلاعات بیش تر
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-dark py-2 mt-2" type="submit">تایید متخصص</button>
+            <button class="btn btn-gray py-2 mt-2" type="submit">رد متخصص</button>
+        </div>
+        {% endif %}
+    </div>
+</div>

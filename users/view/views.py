@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect
 from messaging.models.ticket import Ticket
-from services.models.service_request import RequestStatus, ServiceRequest
+from services.models.service_request import ServiceRequest
 
 from users.models.customer import Customer
-from users.models.it_manager import ITManager
 from users.models.expert import Expert
-from .forms import CustomerRegisterForm, ExpertRegisterForm
+from .forms import CustomerRegisterForm, ExpertRegisterForm, LoginForm
 from django.contrib.auth import login
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 
 
@@ -27,11 +25,16 @@ def register_decorator(user_type):
                 return redirect("/")
             messages.error(request, "Unsuccessful registration. Invalid information.")
             msg = form.errors
-        form = forms.get(user_type)()
+        else:
+            form = forms.get(user_type)()
         return render(
             request=request,
             template_name="users/register.html",
-            context={"register_form": form, "msg": msg},
+            context={
+                "register_form": form,
+                "msg": msg,
+                "user_type": user_type.__name__,
+            },
         )
 
     return request_register
@@ -104,7 +107,7 @@ def home_page(request):
 def login_request(request):
     msg = ""
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
@@ -119,7 +122,8 @@ def login_request(request):
         else:
             msg = form.errors
             messages.error(request, "Invalid username or password.")
-    form = AuthenticationForm()
+    else:
+        form = LoginForm()
     return render(
         request=request,
         template_name="users/login.html",

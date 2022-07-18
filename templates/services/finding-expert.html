@@ -1,0 +1,25 @@
+{% extends "includes/base.html" %}
+
+{% block meta %}
+<meta http-equiv="refresh" content="5" /> {% endblock %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<div class="main-box">
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        خانه / صفحه مشتری / درخواست جدید
+    </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'users/customer/sidebar.html' %}
+        {% include 'services/finding-expert-dialog.html' %}
+    </div>
+
+    <script>
+
+    </script>
+</div>
+
+{% endblock %}
