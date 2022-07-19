@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from services.models.service_request import ServiceRequest
 
+
 class UserCatalogue:
     """
     Provides views to be used by UI from User subsystem
@@ -43,16 +44,23 @@ class UserCatalogue:
 
         return request_register
 
+    def get_service_requests_list(self, user):
+        if isinstance(user.role, Customer):
+            return ServiceRequest.objects.filter(customer=user)
+        elif isinstance(user.role, Expert):
+            return ServiceRequest.objects.filter(expert=user)
+        return []  # todo: error handling
+
     def home_page(self, request):
         user_type = None
         service_requests = None
         if request.user and request.user.is_authenticated:
             user_type = request.user.get_user_type_str()
-            service_requests = ServiceRequest.objects.filter(customer=request.user)
+            service_requests = self.get_service_requests_list(request.user)
         return render(
             request=request,
             template_name="index.html",
-            context={"user_type": user_type, "service_requests": service_requests } if user_type else {},
+            context={"user_type": user_type, "service_requests": service_requests} if user_type else {},
         )
 
     def login_request(self, request):
@@ -83,9 +91,9 @@ class UserCatalogue:
 
     def change_expert_status(self, request):
         if (
-            request.user
-            and request.user.is_authenticated
-            and isinstance(request.user.role, Expert)
+                request.user
+                and request.user.is_authenticated
+                and isinstance(request.user.role, Expert)
         ):
             user_role = request.user.role
             user_role.status = not user_role.status
