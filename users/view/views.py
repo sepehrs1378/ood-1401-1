@@ -6,7 +6,7 @@ from .forms import CustomerRegisterForm, ExpertRegisterForm, LoginForm
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
-
+from services.models.service_request import ServiceRequest
 
 class UserCatalogue:
     """
@@ -45,13 +45,14 @@ class UserCatalogue:
 
     def home_page(self, request):
         user_type = None
+        service_requests = None
         if request.user and request.user.is_authenticated:
             user_type = request.user.get_user_type_str()
-
+            service_requests = ServiceRequest.objects.filter(customer=request.user)
         return render(
             request=request,
             template_name="index.html",
-            context={"user_type": user_type} if user_type else {},
+            context={"user_type": user_type, "service_requests": service_requests } if user_type else {},
         )
 
     def login_request(self, request):

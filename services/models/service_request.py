@@ -11,20 +11,20 @@ class RequestStatus(models.TextChoices):
     wether the customer requested service from a specific expert or expert is selected by system
     """
 
-    INITIATED = "INITIATED", _("Initiated")
-    FINDING_EXPERT = "FINDING_EXPERT", _("Finding expert")
-    EXPERT_FOUND = "EXPERT_FOUND", _("Expert found")
-    NO_EXPERT_FOUND = "NO_EXPERT_FOUND", _("No experts found")
+    INITIATED = "INITIATED", _("ساخته شده")
+    FINDING_EXPERT = "FINDING_EXPERT", _("در حال پیدا کردن متخصص")
+    EXPERT_FOUND = "EXPERT_FOUND", _("متخصص پیدا شد")
+    NO_EXPERT_FOUND = "NO_EXPERT_FOUND", _("هیچ متخصصی پیدا نشد")
     WAIT_FOR_EXPERT_APPROVAL = "WAIT_FOR_EXPERT_APPROVAL", _(
-        "Waiting for expert to approve"
+        "منتظر تایید متخصص"
     )
-    SENT_TO_EXPERT = "SENT_TO_EXPERT", _("Request sent to expert")
-    IN_PROGRESS = "IN_PROGRESS", _("Request is in progress")
-    FINISHED = "FINISHED", _("Request is finsihed")
-    PAYMENT_DONE = "PAYMENT_DONE", _("Payment done")
-    CANCELED_BY_CUSTOMER = "CANCELED_BY_CUSTOMER", _("Request canceled by customer")
-    CANCELED_BY_EXPERT = "CANCELED_BY_EXPERT", _("Request canceled by expert")
-    FEEDBACK_RECEIVED = "FEEDBACK_RECEIVED", _("Feedback received")
+    SENT_TO_EXPERT = "SENT_TO_EXPERT", _("درخواست به متخصص ارسال شد")
+    IN_PROGRESS = "IN_PROGRESS", _("درخواست در حال انجام است")
+    FINISHED = "FINISHED", _("درخواست به پایان رسیده است")
+    PAYMENT_DONE = "PAYMENT_DONE", _("پرداخت انجام شده")
+    CANCELED_BY_CUSTOMER = "CANCELED_BY_CUSTOMER", _("از طرف مشتری لغو شد")
+    CANCELED_BY_EXPERT = "CANCELED_BY_EXPERT", _("از طرف متخصص لفو شد")
+    FEEDBACK_RECEIVED = "FEEDBACK_RECEIVED", _("بازخورد دریافت شد")
 
 
 class RequestType(models.TextChoices):
