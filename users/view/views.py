@@ -1,12 +1,14 @@
+from typing import Dict, Type
 from django.shortcuts import render, redirect
+from users.controller.controller import UserController
 
 from users.models.customer import Customer
 from users.models.expert import Expert
-from .forms import CustomerRegisterForm, ExpertRegisterForm, LoginForm
+from users.models.role import Role
+from users.view.forms import CustomerRegisterForm, ExpertRegisterForm, LoginForm
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
-from services.models.service_request import ServiceRequest
 
 
 class UserView:
@@ -14,10 +16,16 @@ class UserView:
     Provides views to be used by UI from User subsystem
     """
 
-    forms = {Expert: ExpertRegisterForm, Customer: CustomerRegisterForm}
+    forms: Dict = {
+        Expert: ExpertRegisterForm,
+        Customer: CustomerRegisterForm,
+    }
 
-    def register_decorator(self, role_type):
-        def request_register(request):
+    def __init__(self, controller: UserController):
+        self.controller = controller
+
+    def register_decorator(self, role_type: Type[Role]):
+        def register_view(request):
             msg = ""
             if request.method == "POST":
                 form = self.forms.get(role_type)(request.POST, request.FILES)
@@ -42,25 +50,21 @@ class UserView:
                 },
             )
 
-        return request_register
-
-    def get_service_requests_list(self, user):
-        if isinstance(user.role, Customer):
-            return ServiceRequest.objects.filter(customer=user)
-        elif isinstance(user.role, Expert):
-            return ServiceRequest.objects.filter(expert=user)
-        return []  # todo: error handling
+        return register_view
 
     def home_page(self, request):
         user_type = None
         service_requests = None
         if request.user and request.user.is_authenticated:
             user_type = request.user.get_user_type_str()
-            service_requests = self.get_service_requests_list(request.user)
+            service_requests = self.controller.get_service_requests_list(request.user)
         return render(
             request=request,
             template_name="index.html",
-            context={"user_type": user_type, "service_requests": service_requests}
+            context={
+                "user_type": user_type,
+                "service_requests": service_requests,
+            }
             if user_type
             else {},
         )
@@ -92,13 +96,5 @@ class UserView:
         )
 
     def change_expert_status(self, request):
-        if (
-            request.user
-            and request.user.is_authenticated
-            and isinstance(request.user.role, Expert)
-        ):
-            user_role = request.user.role
-            user_role.status = not user_role.status
-            user_role.save()
-
+        self.controller.change_expert_status(request.user)
         return redirect("/users")

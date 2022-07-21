@@ -1,10 +1,10 @@
 from django.urls import path
 from users.models.customer import Customer
 from users.models.expert import Expert
-from . import views
+from home_service.dependency_injection import dependency_injector
 
 app_name = "users"
-user_view = views.UserView()
+user_view = dependency_injector.user_view
 
 urlpatterns = [
     path(

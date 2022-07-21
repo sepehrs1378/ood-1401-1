@@ -1,12 +1,13 @@
 from django.urls import path
+from home_service.dependency_injection import dependency_injector
 from .views import *
 
 app_name = "services"
-service_view = ServiceView()
+service_view = dependency_injector.service_view
 
 urlpatterns = [
     path(
-        "request/<int:expert_id>",
+        "request/<int:role_id>",
         service_view.request_service_from_expert,
         name="request_service_from_expert",
     ),
@@ -35,7 +36,16 @@ urlpatterns = [
         service_view.finish_request,
         name="finish_request",
     ),
-    path("experts/list", service_view.experts_list, name="experts_list"),
+    path(
+        "experts/list",
+        service_view.experts_list,
+        name="experts_list",
+    ),
+    path(
+        "list",
+        service_view.services_list,
+        name="services_list",
+    ),
     path(
         "request/finding",
         service_view.finding_expert,

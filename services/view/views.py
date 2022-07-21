@@ -1,38 +1,38 @@
-from unicodedata import category
 from django.shortcuts import render, redirect
-from services.models.request_reject_relation import RequestRejectionRelation
-from services.models.service import Service
 from users.models.customer import Customer
 from users.models.expert import Expert
-from services.models.service_request import RequestStatus, ServiceRequest
-from services.models.service_category import ServiceCategory
 
 from services.models.service_request import RequestType
-from users.models.user import User
-from .forms import ServiceRequestForm, ServiceRequestFromSystemForm
-from django.contrib.contenttypes.models import ContentType
-from services.controller.controller import service_controller
+from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm
+from services.controller.controller import ServiceController
 
 
 class ServiceView:
+    def __init__(self, controller: ServiceController):
+        self.controller = controller
+
     # Expert is chosen by customer
-    def request_service_from_expert(self, request, expert_id):
+    def request_service_from_expert(self, request, role_id: int):
         msg = ""
-        expert_role = Expert.objects.filter(pk=expert_id).first()
-        expert = User.objects.filter(role=expert_role).first() if expert_role else None
+        expert = self.controller.get_expert_by_role_id(role_id)
         if request.method == "POST":
             form = ServiceRequestForm(
-                request=request.POST, expert=expert, customer=request.user
+                request=request.POST,
+                expert=expert,
+                customer=request.user,
             )
+
             if form.is_valid():
                 request = form.save()
                 msg = "request sent"
                 return redirect("/users")
+
             msg = form.errors
         else:
             form = ServiceRequestForm(expert=expert, customer=request.user)
             if not expert:
                 msg = "Invalid expert selected"
+
         return render(
             request=request,
             template_name="services/request-service.html",
@@ -50,11 +50,14 @@ class ServiceView:
         if request.method == "POST":
             form = ServiceRequestFromSystemForm(request.POST)
             if form.is_valid():
-                service_request = form.save(request.user)
+                service_request = form.save(request.user, self.controller)
                 msg = "request sent"
-                return redirect(
-                    f"/services/request/finding?request_id={service_request.id}"
-                )
+                if service_request.expert is None:
+                    return redirect("/users")
+                else:
+                    return redirect(
+                        f"/services/request/finding?request_id={service_request.id}"
+                    )
             msg = form.errors
         else:
             form = ServiceRequestFromSystemForm()
@@ -65,46 +68,17 @@ class ServiceView:
                 "request_form": form,
                 "msg": msg,
                 "request_type": RequestType.SYSTEM_SELECTED,
-                "all_services_tree": self.get_tree_structure_categories(),
+                "all_services_tree": self.controller.get_service_category_trees(),
             },
         )
-
-    def get_tree_structure_categories(self):
-        root_services = ServiceCategory.objects.filter(parent=None)
-        service_json = []
-        for root in root_services:
-            obj = {"name": root.name, "id": root.id, "children": []}
-            service_json.append(obj)
-            self.append_children(obj["children"], root)
-
-        return service_json
-
-    def append_children(self, children_list, parent):
-        children = ServiceCategory.objects.filter(parent=parent)
-
-        if len(children) == 0:
-            services = Service.objects.filter(category=parent)
-            for service in services:
-                children_list.append(
-                    {
-                        "name": service.name,
-                        "id": service.id,
-                    }
-                )
-        else:
-            for child in children:
-                obj = {"name": child.name, "id": child.id, "children": []}
-                children_list.append(obj)
-                self.append_children(obj["children"], child)
 
     def finding_expert(self, request):
         request_id = request.GET["request_id"]
         service_request = None
         try:
-            service_request = ServiceRequest.objects.filter(pk=int(request_id)).first()
+            service_request = self.controller.get_request_by_id(int(request_id))
         except Exception as e:
-            raise e
-            print("error: ", request_id)
+            print(e)
 
         return render(
             request=request,
@@ -118,14 +92,7 @@ class ServiceView:
                 if request.user is None or not isinstance(request.user.role, Expert):
                     raise Exception("invalid user")
 
-                req = ServiceRequest.objects.filter(
-                    pk=request_id, expert=request.user
-                ).first()
-                if req.request_type == RequestType.SYSTEM_SELECTED:
-                    req.status = RequestStatus.EXPERT_FOUND
-                else:
-                    req.status = RequestStatus.IN_PROGRESS
-                req.save()
+                self.controller.approve_request(request_id, request.user)
                 return redirect("/users")
             except Exception as e:
                 print(e)
@@ -140,39 +107,12 @@ class ServiceView:
                     raise Exception("invalid user")
 
                 # Find request
-                req = ServiceRequest.objects.filter(
-                    pk=request_id, expert=request.user
-                ).first()
-                # Default is no expert found
-                req.status = RequestStatus.NO_EXPERT_FOUND
-
-                # Record rejection
-                RequestRejectionRelation.objects.create(
-                    expert=request.user, request=req
+                req = self.controller.get_request_by_id_and_expert(
+                    request_id, request.user
                 )
 
-                if req.request_type == RequestType.SYSTEM_SELECTED:
-                    # All eligible experts
-                    eligible_experts = service_controller.get_eligible_experts(
-                        req.service
-                    )
-                    # Experts that rejected the request
-                    rejected_experts = list(
-                        map(
-                            lambda rejection: rejection.expert,
-                            list(RequestRejectionRelation.objects.filter(request=req)),
-                        )
-                    )
+                self.controller.reject_request(req, request.user)
 
-                    for expert in eligible_experts:
-                        if expert not in rejected_experts:
-                            req.expert = expert
-                            req.status = RequestStatus.WAIT_FOR_EXPERT_APPROVAL
-                            break
-                else:
-                    req.status = RequestStatus.REJECTED_BY_EXPERT
-
-                req.save()
                 return redirect("/users")
             except Exception as e:
                 print(e)
@@ -189,12 +129,7 @@ class ServiceView:
                 if not isinstance(request.user.role, Customer):
                     raise Exception("invalid user")
 
-                req = ServiceRequest.objects.filter(
-                    pk=request_id,
-                    customer=request.user,
-                ).first()
-                req.status = RequestStatus.IN_PROGRESS
-                req.save()
+                self.controller.accept_expert(int(request_id), request.user)
                 return redirect("/users")
             except Exception as e:
                 print(e)
@@ -208,11 +143,7 @@ class ServiceView:
                 if request.user is None or not isinstance(request.user.role, Expert):
                     raise Exception("invalid user")
 
-                req = ServiceRequest.objects.filter(
-                    pk=request_id, expert=request.user
-                ).first()
-                req.status = RequestStatus.FINISHED
-                req.save()
+                self.controller.finish_request(request_id, request.user)
                 return redirect("/users")
             except Exception as e:
                 print(e)
@@ -223,11 +154,7 @@ class ServiceView:
     def experts_list(self, request):
         user_type = request.user.get_user_type_str()
         # filter based on user.role type
-        experts = list(
-            User.objects.filter(
-                role__polymorphic_ctype=ContentType.objects.get_for_model(Expert)
-            )
-        )
+        experts = self.controller.get_all_experts()
         return render(
             request=request,
             template_name="services/experts-list.html",
@@ -235,4 +162,11 @@ class ServiceView:
                 "experts": experts,
                 "user_type": user_type,
             },
+        )
+
+    def services_list(self, request):
+        return render(
+            request=request,
+            template_name="services/service-list.html",
+            context={"all_services_tree": self.controller.get_service_category_trees},
         )

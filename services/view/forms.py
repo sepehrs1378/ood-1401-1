@@ -1,17 +1,9 @@
-from dataclasses import field
-from http import server
-from os import stat
 from django import forms
 
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Submit, Row, Div, Field, Column
+from crispy_forms.layout import Layout, Submit, Div
 from services.models.service import Service
-from users.models import customer
-from users.models.expert import Expert
-from users.models.user import User
-from django.contrib.contenttypes.models import ContentType
-from services.controller.controller import service_controller
 
 
 class ServiceRequestForm(forms.Form):
@@ -93,7 +85,7 @@ class ServiceRequestFromSystemForm(forms.Form):
             ),
         )
 
-    def save(self, customer):
+    def save(self, customer, service_controller):
         eligible_experts = service_controller.get_eligible_experts(
             self.cleaned_data["service"]
         )
@@ -112,7 +104,7 @@ class ServiceRequestFromSystemForm(forms.Form):
                 status=RequestStatus.WAIT_FOR_EXPERT_APPROVAL,
                 request_type=RequestType.SYSTEM_SELECTED,
             )
-            service_request.save()
             return service_request
 
+        service_request.save()
         return service_request

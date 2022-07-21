@@ -24,7 +24,7 @@ class User(AbstractUser):
         default=None,
     )
 
-    def get_user_type_str(self):
+    def get_user_type_str(self) -> str:
         user_type = None
         if isinstance(self.role, Expert):
             user_type = "expert"
