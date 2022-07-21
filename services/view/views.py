@@ -1,18 +1,20 @@
-from cmath import exp
-import re
+from unicodedata import category
 from django.shortcuts import render, redirect
+from services.models.request_reject_relation import RequestRejectionRelation
 from services.models.service import Service
 from users.models.customer import Customer
 from users.models.expert import Expert
 from services.models.service_request import RequestStatus, ServiceRequest
+from services.models.service_category import ServiceCategory
 
 from services.models.service_request import RequestType
 from users.models.user import User
 from .forms import ServiceRequestForm, ServiceRequestFromSystemForm
 from django.contrib.contenttypes.models import ContentType
+from services.controller.controller import service_controller
 
 
-class ServiceCatalogue:
+class ServiceView:
     # Expert is chosen by customer
     def request_service_from_expert(self, request, expert_id):
         msg = ""
@@ -45,25 +47,17 @@ class ServiceCatalogue:
     # Expert is chosen by system
     def request_service_from_system(self, request):
         msg = ""
-        service_id = request.GET.get("service_id", Service.objects.first().id)
         if request.method == "POST":
-            form = ServiceRequestFromSystemForm(
-                request.POST,
-                initial={
-                    "service": service_id,
-                },
-            )
+            form = ServiceRequestFromSystemForm(request.POST)
             if form.is_valid():
-                service_request = form.save()
+                service_request = form.save(request.user)
                 msg = "request sent"
-                return redirect(f"/services/request/finding/{str(service_request.id)}")
+                return redirect(
+                    f"/services/request/finding?request_id={service_request.id}"
+                )
             msg = form.errors
         else:
-            form = ServiceRequestFromSystemForm(
-                initial={
-                    "service": service_id,
-                },
-            )
+            form = ServiceRequestFromSystemForm()
         return render(
             request=request,
             template_name="services/request-service.html",
@@ -71,20 +65,51 @@ class ServiceCatalogue:
                 "request_form": form,
                 "msg": msg,
                 "request_type": RequestType.SYSTEM_SELECTED,
+                "all_services_tree": self.get_tree_structure_categories(),
             },
         )
 
-    def finding_expert(self, request, service_request_id):
-        service_request = ServiceRequest.objects.filter(
-            pk=int(service_request_id)
-        ).first()
+    def get_tree_structure_categories(self):
+        root_services = ServiceCategory.objects.filter(parent=None)
+        service_json = []
+        for root in root_services:
+            obj = {"name": root.name, "id": root.id, "children": []}
+            service_json.append(obj)
+            self.append_children(obj["children"], root)
+
+        return service_json
+
+    def append_children(self, children_list, parent):
+        children = ServiceCategory.objects.filter(parent=parent)
+
+        if len(children) == 0:
+            services = Service.objects.filter(category=parent)
+            for service in services:
+                children_list.append(
+                    {
+                        "name": service.name,
+                        "id": service.id,
+                    }
+                )
+        else:
+            for child in children:
+                obj = {"name": child.name, "id": child.id, "children": []}
+                children_list.append(obj)
+                self.append_children(obj["children"], child)
+
+    def finding_expert(self, request):
+        request_id = request.GET["request_id"]
+        service_request = None
+        try:
+            service_request = ServiceRequest.objects.filter(pk=int(request_id)).first()
+        except Exception as e:
+            raise e
+            print("error: ", request_id)
+
         return render(
             request=request,
             template_name="services/finding-expert.html",
-            context={
-                "request_id": service_request_id,
-                "service_request": service_request,
-            },
+            context={"service_request": service_request},
         )
 
     def approve_request(self, request, request_id):
@@ -95,6 +120,78 @@ class ServiceCatalogue:
 
                 req = ServiceRequest.objects.filter(
                     pk=request_id, expert=request.user
+                ).first()
+                if req.request_type == RequestType.SYSTEM_SELECTED:
+                    req.status = RequestStatus.EXPERT_FOUND
+                else:
+                    req.status = RequestStatus.IN_PROGRESS
+                req.save()
+                return redirect("/users")
+            except Exception as e:
+                print(e)
+                return redirect("/users")
+        else:
+            return redirect("/users")
+
+    def reject_request(self, request, request_id):
+        if request.user and request.user.is_authenticated:
+            try:
+                if request.user is None or not isinstance(request.user.role, Expert):
+                    raise Exception("invalid user")
+
+                # Find request
+                req = ServiceRequest.objects.filter(
+                    pk=request_id, expert=request.user
+                ).first()
+                # Default is no expert found
+                req.status = RequestStatus.NO_EXPERT_FOUND
+
+                # Record rejection
+                RequestRejectionRelation.objects.create(
+                    expert=request.user, request=req
+                )
+
+                if req.request_type == RequestType.SYSTEM_SELECTED:
+                    # All eligible experts
+                    eligible_experts = service_controller.get_eligible_experts(
+                        req.service
+                    )
+                    # Experts that rejected the request
+                    rejected_experts = list(
+                        map(
+                            lambda rejection: rejection.expert,
+                            list(RequestRejectionRelation.objects.filter(request=req)),
+                        )
+                    )
+
+                    for expert in eligible_experts:
+                        if expert not in rejected_experts:
+                            req.expert = expert
+                            req.status = RequestStatus.WAIT_FOR_EXPERT_APPROVAL
+                            break
+                else:
+                    req.status = RequestStatus.REJECTED_BY_EXPERT
+
+                req.save()
+                return redirect("/users")
+            except Exception as e:
+                print(e)
+                return redirect("/users")
+        else:
+            return redirect("/users")
+
+    def accept_expert(self, request, request_id):
+        """
+        Accept expert by customer
+        """
+        if request.user and request.user.is_authenticated:
+            try:
+                if not isinstance(request.user.role, Customer):
+                    raise Exception("invalid user")
+
+                req = ServiceRequest.objects.filter(
+                    pk=request_id,
+                    customer=request.user,
                 ).first()
                 req.status = RequestStatus.IN_PROGRESS
                 req.save()

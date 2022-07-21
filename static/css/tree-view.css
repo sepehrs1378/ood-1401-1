@@ -45,6 +45,8 @@ ul,
     direction: ltr;
 }
 
-.each-item:hover {
+.onclick-item:hover {
     cursor: pointer;
+    background: rgba(233, 59, 119, 0.2);
+    border-radius: 4px;
 }

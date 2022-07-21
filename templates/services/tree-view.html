@@ -1,5 +1,5 @@
-<div class="tree-view">
-    <ul id="myUL">
+<div class="tree-view" style="width: 40%;">
+    <!-- <ul id="myUL">
         <li><span class="caret">همه انواع سرویس‌ها</span>
             <ul class="nested">
                 <li class="each-item" onclick="$('#id_service').val('4')">خدمات فنی</li>
@@ -20,7 +20,114 @@
                 </li>
             </ul>
         </li>
+    </ul> -->
+    <ul id="myUL" class="w-100">
+        <li id="services"><span class="caret py-2">همه انواع سرویس‌ها</span>
+        </li>
     </ul>
+
+    <script>
+        var createSublist = function (container, args) {
+            var ul = document.createElement('ul');
+            ul.className = "nested py-1 w-100";
+
+            for (var j = 0; j < args.length; j++) {
+                var row = args[j];
+
+                var li = document.createElement('li');
+                var span = document.createElement("span");
+                span.className = "caret py-1";
+                span.innerText = row.name;
+                li.appendChild(span);
+                li.className = "each-item p-1";
+
+                var nodes = row.children;
+                if (nodes && nodes.length) {
+                    createSublist(li, nodes);
+                } else {
+                    li.onclick = function (e) {
+                        $('#id_service').val(row.id);
+                        e.stopPropagation();
+                        return true;
+                    }
+                    li.classList.add("onclick-item");
+                }
+
+                ul.appendChild(li);
+            }
+
+            container.appendChild(ul);
+        };
+        var data = [
+            {
+                "name": "France",
+                "id": "",
+                "children": [
+                    {
+                        "name": "Bread",
+                        "id": "",
+                    },
+                    {
+                        "name": "Nocco",
+                        "id": "",
+                    }
+                ],
+            },
+            {
+                "name": "Italy",
+                "id": "",
+                "children": [
+                    {
+                        "name": "Pizza",
+                        "id": ""
+                    },
+                    {
+                        "name": "Wine",
+                        "id": "",
+                        "children": [
+                            {
+                                "name": "Red",
+                                "id": "",
+                                "children": [
+                                    {
+                                        "name": "mammad",
+                                        "id": 2
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "White",
+                                "id": "",
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        function escapeRegExp(str) {
+            return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        }
+        function replaceAll(str, find, replace) {
+            return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+        }
+
+        var str = "{{ all_services_tree|safe }}";
+        var new_str = replaceAll(str, "'", "\"");
+
+        var data = JSON.parse(new_str);
+        console.log(data);
+
+        var container = document.getElementById('services');
+
+        if (container) {
+            createSublist(container, data);
+        }
+
+        else {
+            console.log('Container has not been found');
+        }
+    </script>
 
     <script>
         var toggler = document.getElementsByClassName("caret");

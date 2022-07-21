@@ -9,7 +9,7 @@ from django.contrib.auth import login, authenticate
 from services.models.service_request import ServiceRequest
 
 
-class UserCatalogue:
+class UserView:
     """
     Provides views to be used by UI from User subsystem
     """
@@ -60,7 +60,9 @@ class UserCatalogue:
         return render(
             request=request,
             template_name="index.html",
-            context={"user_type": user_type, "service_requests": service_requests} if user_type else {},
+            context={"user_type": user_type, "service_requests": service_requests}
+            if user_type
+            else {},
         )
 
     def login_request(self, request):
@@ -91,9 +93,9 @@ class UserCatalogue:
 
     def change_expert_status(self, request):
         if (
-                request.user
-                and request.user.is_authenticated
-                and isinstance(request.user.role, Expert)
+            request.user
+            and request.user.is_authenticated
+            and isinstance(request.user.role, Expert)
         ):
             user_role = request.user.role
             user_role.status = not user_role.status

@@ -1,36 +1,53 @@
 <table class="table table-hover">
     <thead class="list-header">
-    <tr>
-        <th class="list-header-column" scope="col">عملیات</th>
-        <th class="list-header-column" scope="col">وضعیت درخواست</th>
-        <th class="list-header-column" scope="col">امتیاز</th>
-        <th class="list-header-column" scope="col">نوع سرویس</th>
-        <th class="list-header-column" scope="col">مشتری</th>
-        <th class="list-header-column" scope="col">تاریخ</th>
-    </tr>
+        <tr>
+            <th class="list-header-column" scope="col">عملیات</th>
+            <th class="list-header-column" scope="col">وضعیت درخواست</th>
+            <th class="list-header-column" scope="col">امتیاز</th>
+            <th class="list-header-column" scope="col">نوع سرویس</th>
+            <th class="list-header-column" scope="col">مشتری</th>
+            <th class="list-header-column" scope="col">تاریخ</th>
+        </tr>
     </thead>
     <tbody>
-    {% for request in service_requests %}
+        {% for request in service_requests %}
         <tr class="list-entry">
             <td>
+                {% if request.status == "WAIT_FOR_EXPERT_APPROVAL" %}
                 <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
                     ...
                 </button>
                 <div class="dropdown-menu complete-rtl">
-                    <a class="dropdown-item" href="#">تایید</a>
-                    <a class="dropdown-item" href="#">رد درخواست</a>
+                    <a class="dropdown-item" href="/services/approve/{{ request.id }}">تایید</a>
+                    <a class="dropdown-item" href="/services/reject/{{ request.id }}">رد درخواست</a>
                 </div>
+                {% elif request.status == "IN_PROGRESS" %}
+                <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
+                    ...
+                </button>
+                <div class="dropdown-menu complete-rtl">
+                    <a class="dropdown-item" href="/services/finish/{{ request.id }}">اتمام درخواست</a>
+                </div>
+                {% endif %}
             </td>
             <td>
                 {{ request.get_status_display }}
             </td>
             <td>3/5</td>
             <td>{{ request.service }}</td>
-            <td>{{ request.customer }}</td>
-            <td>
-                ۲۹ تیر ۱۴۰۱
+            <td>{{ request.customer.name }}</td>
+            <td id="date-item-{{ request.id }}">
+                <!-- {{ request.created_at|date:"Y M d" }} -->
             </td>
+            <script>
+                var element = document.getElementById("date-item-{{ request.id }}");
+                element.innerText = new Intl.DateTimeFormat('fa-IR', {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                }).format(new Date("{{ request.created_at|date:'Y M d' }}"));
+            </script>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </tbody>
 </table>

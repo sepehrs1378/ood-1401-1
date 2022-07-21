@@ -15,4 +15,4 @@ class Service(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.name} --> {self.category}"
+        return f"{self.name} <-- {self.category}"
