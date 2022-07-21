@@ -10,14 +10,7 @@
         {% endif %}
     </div>
     <div class="form-body form-link complete-rtl">
-        {% if service_request.status == "FINDING_EXPERT" %}
-        <div class="my-3">
-            <h3>در حال پیدا کردن متخصص هستیم...</h3>
-            <p class="sub-color">
-                درخواست شما به متخصصان ارسال شد، در صورت تایید توسط متخصص به اطلاعتان می رسانیم.
-            </p>
-        </div>
-        {% else %}
+        {% if service_request.status == "EXPERT_FOUND" %}
         <div class="my-3">
             <h3>متخصص پیدا شد!</h3>
             <p class="sub-color">
@@ -41,8 +34,17 @@
             </div>
         </div>
         <div class="d-flex justify-content-between">
-            <button class="btn btn-dark py-2 mt-2" type="submit">تایید متخصص</button>
-            <button class="btn btn-gray py-2 mt-2" type="submit">رد متخصص</button>
+            <a href="/services/accept-expert/{{ service_request.id }}" class="btn btn-dark py-2 mt-2"
+                style="color: white;">تایید
+                متخصص</a>
+            <a class="btn btn-gray py-2 mt-2" type="submit">رد متخصص</a>
+        </div>
+        {% else %}
+        <div class="my-3">
+            <h3>در حال پیدا کردن متخصص هستیم...</h3>
+            <p class="sub-color">
+                درخواست شما به متخصصان ارسال شد، در صورت تایید توسط متخصص به اطلاعتان می رسانیم.
+            </p>
         </div>
         {% endif %}
     </div>

@@ -10,6 +10,8 @@ from services.models.service import Service
 from users.models import customer
 from users.models.expert import Expert
 from users.models.user import User
+from django.contrib.contenttypes.models import ContentType
+from services.controller.controller import service_controller
 
 
 class ServiceRequestForm(forms.Form):
@@ -62,6 +64,10 @@ class ServiceRequestForm(forms.Form):
 
 
 class ServiceRequestFromSystemForm(forms.Form):
+    """
+    This form is used when the customer wants the system to recommend an expert
+    """
+
     service = forms.ModelChoiceField(queryset=Service.objects.all())
 
     class Meta:
@@ -70,7 +76,6 @@ class ServiceRequestFromSystemForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ServiceRequestFromSystemForm, self).__init__(*args, **kwargs)
         self.fields["service"].label = "سرویس انتخاب شده"
-        self.fields["service"].disabled = True
         self.fields["service"].widget.attrs[
             "style"
         ] = "text-align: left; direction: ltr;"
@@ -88,6 +93,26 @@ class ServiceRequestFromSystemForm(forms.Form):
             ),
         )
 
-    def save(self):
-        # TODO
-        return ServiceRequest.objects.first()
+    def save(self, customer):
+        eligible_experts = service_controller.get_eligible_experts(
+            self.cleaned_data["service"]
+        )
+        service_request = ServiceRequest(
+            customer=customer,
+            service=self.cleaned_data["service"],
+            expert=None,
+            status=RequestStatus.NO_EXPERT_FOUND,
+            request_type=RequestType.SYSTEM_SELECTED,
+        )
+        for expert in eligible_experts:
+            service_request = ServiceRequest(
+                customer=customer,
+                service=self.cleaned_data["service"],
+                expert=expert,
+                status=RequestStatus.WAIT_FOR_EXPERT_APPROVAL,
+                request_type=RequestType.SYSTEM_SELECTED,
+            )
+            service_request.save()
+            return service_request
+
+        return service_request

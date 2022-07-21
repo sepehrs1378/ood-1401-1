@@ -1,36 +1,52 @@
 <table class="table table-hover">
     <thead class="list-header">
-    <tr>
-        <th class="list-header-column" scope="col">عملیات</th>
-        <th class="list-header-column" scope="col">وضعیت درخواست</th>
-        <th class="list-header-column" scope="col">امتیاز</th>
-        <th class="list-header-column" scope="col">نوع سرویس</th>
-        <th class="list-header-column" scope="col">متخصص</th>
-        <th class="list-header-column" scope="col">تاریخ</th>
-    </tr>
+        <tr>
+            <th class="list-header-column" scope="col">عملیات</th>
+            <th class="list-header-column" scope="col">وضعیت درخواست</th>
+            <th class="list-header-column" scope="col">امتیاز</th>
+            <th class="list-header-column" scope="col">نوع سرویس</th>
+            <th class="list-header-column" scope="col">متخصص</th>
+            <th class="list-header-column" scope="col">تاریخ</th>
+        </tr>
     </thead>
     <tbody>
-    {% for request in service_requests %}
+        {% for request in service_requests %}
         <tr class="list-entry">
             <td>
+                {% if request.status == "EXPERT_FOUND" %}
+                <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
+                    ...
+                </button>
+                <div class="dropdown-menu complete-rtl">
+                    <a class="dropdown-item" href="/services/accept-expert/{{ request.id }}">تایید متخصص</a>
+                </div>
+                {% elif request.status == "FINISHED" %}
                 <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
                     ...
                 </button>
                 <div class="dropdown-menu complete-rtl">
                     <a class="dropdown-item" href="#">ثبت نظر</a>
-                    <a class="dropdown-item" href="#">پیام به متخصص</a>
                 </div>
+                {% endif %}
             </td>
             <td>
                 {{ request.get_status_display}}
             </td>
             <td>3/5</td>
             <td>{{ request.service }}</td>
-            <td>{{ request.expert }}</td>
-            <td>
-                ۲۹ تیر ۱۴۰۱
+            <td>{{ request.expert.name }}</td>
+            <td id="date-item-{{ request.id }}">
+                <!-- {{ request.created_at|date:"Y M d" }} -->
             </td>
+            <script>
+                var element = document.getElementById("date-item-{{ request.id }}");
+                element.innerText = new Intl.DateTimeFormat('fa-IR', {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                }).format(new Date("{{ request.created_at|date:'Y M d' }}"));
+            </script>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </tbody>
 </table>
