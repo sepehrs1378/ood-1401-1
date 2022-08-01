@@ -1,0 +1,32 @@
+{% extends "includes/base.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+<script src="{% static 'js/chatbox1.js' %}"></script>
+
+<!-- This the chatroom page containing all chats and the chatbox for the selected chat. -->
+
+<div class="main-box">
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        {% if user_type == "customer" %}
+        خانه / صفحه مشتری / جعبه پیام‌ها
+        {% else %}
+        خانه / صفحه متخصص / جعبه پیام‌ها
+        {% endif %}
+    </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% if user_type == "customer" %}
+        {% include 'users/customer/sidebar.html' %}
+        {% else %}
+        {% include 'users/expert/sidebar.html' %}
+        {% endif %}
+        {% include 'messaging/chatbox.html' %}
+    </div>
+
+</div>
+
+{% endblock %}
