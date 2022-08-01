@@ -1,4 +1,3 @@
-from turtle import ondrag
 from django.db import models
 from .evaluation_metric import EvaluationMetric
 from .feedback import Feedback
