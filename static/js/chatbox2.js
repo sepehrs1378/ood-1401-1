@@ -33,5 +33,5 @@ async function update_chatbox() {
 
 function set_selected_channel(ch) {
     selected_channel = ch;
-    console.log(`New selected channel: ${ch}`);
+    update_chatbox();
 }
