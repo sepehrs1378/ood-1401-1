@@ -1,0 +1,40 @@
+{% load crispy_forms_tags %}
+
+<!--Profile-->
+<div class="container w-50 form-container mt-0">
+    <div class="form-header">
+        {% if user_type == 'Customer' %}
+        <h3>صفحه پروفایل مشتری</h3>
+        {% else %}
+        <h3>صفحه پروفایل متخصص</h3>
+        {% endif %}
+    </div>
+    <div class="form-body form-link complete-rtl">
+        <div class="my-3">
+            {% if user_type == 'Customer' %}
+            <h3>صفحه پروفایل مشتری</h3>
+            {% else %}
+            <h3>صفحه پروفایل متخصص</h3>
+            {% endif %}
+            <p class="sub-color">
+                اگر نمی خواهید رمز عبور خود را تغییر دهید، فیلدهای مربوط به آن را خالی بگذارید.
+            </p>
+        </div>
+
+        <div class="my-4">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %} {% crispy profile_form %}
+            </form>
+        </div>
+
+        {% if profile_form.errors %}
+        {% for field in form %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger">
+            {{ error|escape }}
+        </div>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>

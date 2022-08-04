@@ -5,7 +5,7 @@ from users.controller.controller import UserController
 from users.models.customer import Customer
 from users.models.expert import Expert
 from users.models.role import Role
-from users.view.forms import CustomerRegisterForm, ExpertRegisterForm, LoginForm
+from users.view.forms import *
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -19,6 +19,11 @@ class UserView:
     forms: Dict = {
         Expert: ExpertRegisterForm,
         Customer: CustomerRegisterForm,
+    }
+
+    edit_forms: Dict = {
+        Expert: ExpertEditProfileForm,
+        Customer: CustomerEditProfileForm,
     }
 
     def __init__(self, controller: UserController):
@@ -98,3 +103,28 @@ class UserView:
     def change_expert_status(self, request):
         self.controller.change_expert_status(request.user)
         return redirect("/users")
+
+    def profile(self, role_type: Type[Role]):
+        def profile_view(request):
+            user = self.controller.get_user_info(request.user)
+            msg = ""
+            if request.method == "POST":
+                form = self.edit_forms.get(role_type)(user, request.POST, request.FILES)
+                if form.is_valid():
+                    form.save(user)
+                    messages.success(request, "Edit Profile successful.")
+                messages.error(request, "Unsuccessful Edit Profile Invalid information.")
+                msg = form.errors
+            else:
+                form = self.edit_forms.get(role_type)(user)
+            return render(
+                request=request,
+                template_name="users/profile.html",
+                context={
+                    "profile_form": form,
+                    "msg": msg,
+                    "user_type": role_type.__name__,
+                },
+            )
+
+        return profile_view

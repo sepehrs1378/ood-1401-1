@@ -17,3 +17,7 @@ class UserController:
             user_role = user.role
             user_role.status = not user_role.status
             user_role.save()
+    
+    def get_user_info(self, user: User):
+        return User.objects.get(username=user.username)
+
