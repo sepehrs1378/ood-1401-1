@@ -9,6 +9,7 @@ from messaging.controller.controller import MessagingController
 from messaging.models.ticket import Ticket, TicketStatus
 from messaging.models.ticket_message import TicketMessage
 
+
 class MessagingView:
     def __init__(self, controller: MessagingController) -> None:
         self.controller = controller
@@ -85,10 +86,12 @@ class MessagingView:
             context={"request_form": form, "msg": msg},
         )
 
+    @csrf_exempt
     def send_message(self, request, channel_id):
-        result = self.controller.send_message(
-            request.user, channel_id, request.POST["text"]
-        )
+        body = request.body.decode()
+        body = {body.split(":")[0]: body.split(":")[1]}
+
+        result = self.controller.send_message(request.user, channel_id, body["text"])
 
         return HttpResponse(result)
 

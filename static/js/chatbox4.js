@@ -5,30 +5,49 @@ const chatbox_interval = setInterval(update_chatbox, 1000)
 async function update_chatbox() {
     if (selected_channel != null) {
         // Fetch messages
-        let xml_req = new XMLHttpRequest();
-        xml_req.onreadystatechange = function () {
-            if (xml_req.readyState === 4) {
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
                 // Update messages in browser
-                messages = JSON.parse(xml_req.response)
+                messages = JSON.parse(xhr.response)
                 let chatbox = document.getElementById('chat');
                 chatbox.innerHTML = '';
                 for (let i = 0; i < messages.length; i++) {
                     msg = messages[i];
-                    msg_html = `<li class="${msg['is_sent_by_me'] ? 'me' : 'you'}">
+                    msg_html = `<li class="${msg["is_sent_by_me"] ? "me" : "you"}">
 				                    <div class="entete">
-					                    <h3>${msg['time']}</h3>
+					                    <h3>${msg["time"]}</h3>
 				                    </div>
-				                    <!-- <div class="triangle"></div> -->
 				                    <div class="message">
-                                        ${msg['text']}
+                                        ${msg["text"]}
                                     </div>
 			                    </li>`
                     chatbox.innerHTML += msg_html;
                 }
             }
         }
-        xml_req.open("GET", `/messaging/chatroom/channel/${selected_channel}/get-messages/`);
-        xml_req.send(null);
+
+        xhr.open("GET", `/messaging/chatroom/channel/${selected_channel}/get-messages/`);
+        xhr.send(null);
+    }
+}
+
+function send_message() {
+    if (selected_channel != null) {
+        // Send message
+        msg = document.getElementById("msg-text").value;
+
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                update_chatbox();
+            }
+        }
+
+        body = `text:${msg}`;
+        xhr.open("POST", `/messaging/chatroom/channel/${selected_channel}/send/`);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(body);
     }
 }
 

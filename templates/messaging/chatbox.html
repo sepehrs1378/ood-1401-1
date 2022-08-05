@@ -34,11 +34,9 @@
 			<!-- Empty. Should be loaded with request from js file.  -->
 		</ul>
 		<footer>
-			{% csrf_token %}
-			<span>
-			<textarea placeholder="پیام خود را اینجا بنویسید"></textarea>
-			<a href="#">Send</a>
-			</span>
+			<p id="csrf-token" hidden>{{ csrf_token }}</p>
+			<textarea id="msg-text" placeholder="پیام خود را اینجا بنویسید"></textarea>
+			<p style="color: blue" onclick="send_message()">ارسال</p>
 		</footer>
 	</main>
 </div>
