@@ -12,6 +12,8 @@ class MessagingController:
         query |= Channel.objects.filter(expert__id=user.id)
 
         channels = query.all()
+        for channel in channels:
+            channel.contact_name = channel.get_contact_name(user)
 
         return channels
 
@@ -21,6 +23,8 @@ class MessagingController:
             return False
 
         messages = Message.objects.filter(channel__id=channel_id).all()
+        for msg in messages:
+            msg.is_sent_by_me = msg.sender_id == user.id
 
         return messages
 

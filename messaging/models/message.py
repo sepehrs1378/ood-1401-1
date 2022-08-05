@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Customer, Expert, User
+from users.models import User
 from services.models.service_request import ServiceRequest
 from django.utils.timezone import now
 
@@ -21,6 +21,16 @@ class Channel(models.Model):
     )
     time_of_creation = models.DateField(default=now)
 
+    # Returns the name of the other person on the channel
+    def get_contact_name(self, your_user: User):
+        if your_user.id == self.customer.id:
+            return self.expert.username
+        elif your_user.id == self.expert.id:
+            return self.customer.id
+        else:
+            return False
+
+    
 
 class Message(models.Model):
     """
@@ -33,5 +43,3 @@ class Message(models.Model):
     sender = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     time = models.DateField(default=now)
     text = models.TextField()
-    # TODO: is file needed??
-    # file = models.FileField()

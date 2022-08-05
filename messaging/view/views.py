@@ -86,15 +86,11 @@ class MessagingView:
             context={"request_form": form, "msg": msg},
         )
 
-    # TODO: remove csrf_exempt if possible, csrf token can be sent to the client in the chatroom.html
-    @csrf_exempt
     def send_message(self, request, channel_id):
         result = self.controller.send_message(
             request.user, channel_id, request.POST["text"]
         )
 
-        # TODO: remove redirect and use sth else, like js ...
-        # return redirect(f"/channels/{channel_id}/get-messages")
         return HttpResponse(result)
 
     # Returns messages of a chennel
@@ -102,7 +98,9 @@ class MessagingView:
         messages = self.controller.get_messages_of_channel(request.user, channel_id)
         messages = [msg.__dict__ for msg in messages]
         for i, msg in enumerate(messages):
-            messages[i] = {key:str(msg[key]) for key in msg if not key.startswith('_')}
+            msg = {key: msg[key] for key in msg if not key.startswith("_")}
+            msg["time"] = str(msg["time"])
+            messages[i] = msg
 
         return HttpResponse(json.dumps(messages))
 
