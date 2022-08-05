@@ -16,5 +16,12 @@ class EvaluationFeedback(models.Model):
         EvaluationMetric, blank=False, null=False, on_delete=models.CASCADE
     )
     feedback = models.ForeignKey(
-        Feedback, blank=False, null=False, on_delete=models.CASCADE
+        Feedback,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name="feedbacks",
     )
+
+    def __str__(self) -> str:
+        return f"امتیاز={self.rate} - {self.evaluation_metric.question} - {self.feedback.service_request}"

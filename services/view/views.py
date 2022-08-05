@@ -1,9 +1,10 @@
 from traceback import print_tb
 from django.shortcuts import render, redirect
+from services.view.exceptions import RepeatedRequestException
 from users.models.customer import Customer
 from users.models.expert import Expert
 
-from services.models.service_request import RequestType
+from services.models.service_request import RequestStatus, RequestType
 from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm
 from services.controller.controller import ServiceController
 
@@ -23,12 +24,15 @@ class ServiceView:
                 customer=request.user,
             )
 
-            if form.is_valid():
-                request = form.save()
-                msg = "request sent"
-                return redirect("/users")
+            try:
+                if form.is_valid():
+                    request = form.save()
+                    msg = "request sent"
+                    return redirect("/users")
+                msg = form.errors
+            except RepeatedRequestException:
+                msg = "یک درخواست از این نوع سرویس در حال انجام است."
 
-            msg = form.errors
         else:
             form = ServiceRequestForm(expert=expert, customer=request.user)
             if not expert:
@@ -51,17 +55,19 @@ class ServiceView:
         if request.method == "POST":
             form = ServiceRequestFromSystemForm(request.POST)
             if form.is_valid():
-                service_request = form.save(request.user, self.controller)
-                print(service_request)
-                print(service_request.id)
-                msg = "request sent"
-                if service_request.expert is None:
-                    return redirect("/users")
-                else:
-                    return redirect(
-                        f"/services/request/finding?request_id={service_request.id}"
-                    )
-            msg = form.errors
+                try:
+                    service_request = form.save(request.user, self.controller)
+                    print(service_request)
+                    print(service_request.id)
+                    msg = "request sent"
+                    if service_request.status == RequestStatus.NO_EXPERT_FOUND:
+                        return redirect("/users")
+                    else:
+                        return redirect(
+                            f"/services/request/finding?request_id={service_request.id}"
+                        )
+                except RepeatedRequestException:
+                    msg = "یک درخواست از این نوع سرویس در حال انجام است."
         else:
             form = ServiceRequestFromSystemForm()
         return render(
@@ -155,9 +161,10 @@ class ServiceView:
             return redirect("/users")
 
     def experts_list(self, request):
+        query = request.GET.get("q")
         user_type = request.user.get_user_type_str()
         # filter based on user.role type
-        experts = self.controller.get_all_experts()
+        experts = self.controller.get_all_experts(query)
         return render(
             request=request,
             template_name="services/experts-list.html",
@@ -168,8 +175,11 @@ class ServiceView:
         )
 
     def services_list(self, request):
+        query = request.GET.get("q")
         return render(
             request=request,
             template_name="services/service-list.html",
-            context={"all_services_tree": self.controller.get_service_category_trees},
+            context={
+                "all_services_tree": self.controller.get_service_category_trees(query)
+            },
         )
