@@ -1,6 +1,7 @@
 from django import forms
 
-from messaging.models.ticket import Ticket, TicketMessage
+from messaging.models.ticket import Ticket
+from messaging.models.ticket_message import TicketMessage
 
 
 class TicketForm(forms.ModelForm):
