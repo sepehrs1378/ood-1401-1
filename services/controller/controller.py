@@ -32,7 +32,12 @@ class ServiceController:
         root_services = ServiceCategory.objects.filter(parent=None)
         service_json = []
         for root in root_services:
-            obj = {"name": root.name, "id": root.id, "children": []}
+            obj = {
+                "name": root.name,
+                "id": root.id,
+                "desc": root.description,
+                "children": [],
+            }
             service_json.append(obj)
             self.append_children(obj["children"], root)
 
@@ -50,11 +55,17 @@ class ServiceController:
                     {
                         "name": service.name,
                         "id": service.id,
+                        "desc": service.description,
                     }
                 )
         else:
             for child in children:
-                obj = {"name": child.name, "id": child.id, "children": []}
+                obj = {
+                    "name": child.name,
+                    "id": child.id,
+                    "desc": child.description,
+                    "children": [],
+                }
                 children_list.append(obj)
                 self.append_children(obj["children"], child)
 
