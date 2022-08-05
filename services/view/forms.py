@@ -89,20 +89,20 @@ class ServiceRequestFromSystemForm(forms.Form):
         eligible_experts = service_controller.get_eligible_experts(
             self.cleaned_data["service"]
         )
-        service_request = ServiceRequest(
-            customer=customer,
-            service=self.cleaned_data["service"],
-            expert=None,
-            status=RequestStatus.NO_EXPERT_FOUND,
-            request_type=RequestType.SYSTEM_SELECTED,
-        )
-        print(eligible_experts)
-        for expert in eligible_experts:
+        if len(eligible_experts) > 0:
             service_request = ServiceRequest(
                 customer=customer,
                 service=self.cleaned_data["service"],
-                expert=expert,
+                expert=None,
                 status=RequestStatus.WAIT_FOR_EXPERT_APPROVAL,
+                request_type=RequestType.SYSTEM_SELECTED,
+            )
+        else:
+            service_request = ServiceRequest(
+                customer=customer,
+                service=self.cleaned_data["service"],
+                expert=None,
+                status=RequestStatus.NO_EXPERT_FOUND,
                 request_type=RequestType.SYSTEM_SELECTED,
             )
 

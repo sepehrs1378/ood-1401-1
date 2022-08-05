@@ -1,8 +1,8 @@
 from typing import Dict, List, Union
-from services.models.request_reject_relation import RequestRejectionRelation
 from services.models.service import Service
 from services.models.service_category import ServiceCategory
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
+from users.models import user
 from users.models.expert import Expert
 from users.models.user import User
 from django.contrib.contenttypes.models import ContentType
@@ -87,28 +87,9 @@ class ServiceController:
             return None
 
     def reject_request(self, req: ServiceRequest, expert: User) -> None:
-        # Default is no expert found
-        req.status = RequestStatus.NO_EXPERT_FOUND
-
-        # Record rejection
-        RequestRejectionRelation.objects.create(expert=expert, request=req)
-
         if req.request_type == RequestType.SYSTEM_SELECTED:
-            # All eligible experts
-            eligible_experts = self.get_eligible_experts(req.service)
-            # Experts that rejected the request
-            rejected_experts = list(
-                map(
-                    lambda rejection: rejection.expert,
-                    list(RequestRejectionRelation.objects.filter(request=req)),
-                )
-            )
-
-            for expert in eligible_experts:
-                if expert not in rejected_experts:
-                    req.expert = expert
-                    req.status = RequestStatus.WAIT_FOR_EXPERT_APPROVAL
-                    break
+            req.status = RequestStatus.WAIT_FOR_EXPERT_APPROVAL
+            req.expert = None
         else:
             req.status = RequestStatus.REJECTED_BY_EXPERT
 
@@ -150,7 +131,8 @@ class ServiceController:
         )
 
     def approve_request(self, request_id: int, expert: User) -> None:
-        req = self.get_request_by_id_and_expert(request_id, expert)
+        req = self.get_request_by_id_and_expert(request_id, None)
+        req.expert = expert
         if req.request_type == RequestType.SYSTEM_SELECTED:
             req.status = RequestStatus.EXPERT_FOUND
         else:

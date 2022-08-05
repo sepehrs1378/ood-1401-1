@@ -19,7 +19,9 @@
                 </button>
                 <div class="dropdown-menu complete-rtl">
                     <a class="dropdown-item" href="/services/approve/{{ request.id }}">تایید</a>
+                    {% if request.expert %}
                     <a class="dropdown-item" href="/services/reject/{{ request.id }}">رد درخواست</a>
+                    {% endif %}
                 </div>
                 {% elif request.status == "IN_PROGRESS" %}
                 <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">

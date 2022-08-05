@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from users.models.customer import Customer
 from users.models.expert import Expert
 
-from services.models.service_request import RequestType
+from services.models.service_request import RequestStatus, RequestType
 from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm
 from services.controller.controller import ServiceController
 
@@ -55,7 +55,7 @@ class ServiceView:
                 print(service_request)
                 print(service_request.id)
                 msg = "request sent"
-                if service_request.expert is None:
+                if service_request.status == RequestStatus.NO_EXPERT_FOUND:
                     return redirect("/users")
                 else:
                     return redirect(
