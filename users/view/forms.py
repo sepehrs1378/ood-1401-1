@@ -250,7 +250,28 @@ class LoginForm(AuthenticationForm):
         ] = "text-align: right; direction: rtl;"
 
 
-class CustomerEditProfileForm(UserRegisterForm):
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+    phone_number = forms.CharField(max_length=11, required=True)
+    name = forms.CharField(required=True)
+    password1 = forms.CharField(required=False, widget=forms.PasswordInput)
+    password2 = forms.CharField(required=False, widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "name",
+            "email",
+            "phone_number",
+            "password1",
+            "password2",)
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+class CustomerEditProfileForm(UserUpdateForm):
+
     address = forms.CharField(
         label="",
         strip=False,
@@ -264,11 +285,15 @@ class CustomerEditProfileForm(UserRegisterForm):
     )
 
     def clean(self):
-        pass
-        #TODO
-
-    class Meta(UserRegisterForm.Meta):
-        fields = UserRegisterForm.Meta.fields + ("address",)
+        if (self.cleaned_data["password1"] != self.cleaned_data["password2"]):
+            raise forms.ValidationError("دو رمز عبور واردشده یکسان نمی باشند.")
+        if (UserController.check_username_is_repetitive(self.customer.pk, self.cleaned_data["username"])):
+            raise forms.ValidationError("نام کاربری وارد شده تکرای می باشد.")
+        if (UserController.check_email_is_repetitive(self.customer.pk, self.cleaned_data["email"])):
+            raise forms.ValidationError("ایمیل وارد شده تکرای می باشد.")
+        
+    class Meta(UserUpdateForm.Meta):
+        fields = UserUpdateForm.Meta.fields + ("address",)
 
     def save(self, customer):
         customer.username = self.cleaned_data["username"]
@@ -280,6 +305,7 @@ class CustomerEditProfileForm(UserRegisterForm):
         customer.save()
 
     def __init__(self, customer, *args, **kwargs) -> None:
+        self.customer = customer
         super().__init__(*args, **kwargs)
         
         self.fields["username"].initial = customer.username

@@ -113,6 +113,7 @@ class UserView:
                 if form.is_valid():
                     form.save(user)
                     messages.success(request, "Edit Profile successful.")
+                    return redirect(request.path_info)
                 messages.error(request, "Unsuccessful Edit Profile Invalid information.")
                 msg = form.errors
             else:
