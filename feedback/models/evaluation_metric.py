@@ -7,4 +7,3 @@ class EvaluationMetric(models.Model):
     """
 
     question = models.TextField(blank=False, null=False)
-    hidden = models.BooleanField(default=False)
