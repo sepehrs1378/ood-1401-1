@@ -4,6 +4,7 @@ from services.models.service_request import RequestStatus, RequestType, ServiceR
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Div
 from services.models.service import Service
+from services.view.exceptions import RepeatedRequestException
 
 
 class ServiceRequestForm(forms.Form):
@@ -17,6 +18,15 @@ class ServiceRequestForm(forms.Form):
         fields = ["service"]
 
     def save(self):
+        customer_previous_requests = ServiceRequest.objects.filter(
+            customer=self.customer,
+            service=self.cleaned_data["service"],
+            status=RequestStatus.IN_PROGRESS,
+        )
+
+        if len(customer_previous_requests) > 0:
+            raise RepeatedRequestException()
+
         request = ServiceRequest.objects.create(
             customer=self.customer,
             expert=self.expert,
@@ -86,6 +96,15 @@ class ServiceRequestFromSystemForm(forms.Form):
         )
 
     def save(self, customer, service_controller):
+        customer_previous_requests = ServiceRequest.objects.filter(
+            customer=customer,
+            service=self.cleaned_data["service"],
+            status=RequestStatus.IN_PROGRESS,
+        )
+
+        if len(customer_previous_requests) > 0:
+            raise RepeatedRequestException()
+
         eligible_experts = service_controller.get_eligible_experts(
             self.cleaned_data["service"]
         )

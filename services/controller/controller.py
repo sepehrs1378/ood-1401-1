@@ -131,7 +131,7 @@ class ServiceController:
         )
 
     def approve_request(self, request_id: int, expert: User) -> None:
-        req = self.get_request_by_id_and_expert(request_id, None)
+        req = ServiceRequest.objects.filter(pk=request_id).first()
         req.expert = expert
         if req.request_type == RequestType.SYSTEM_SELECTED:
             req.status = RequestStatus.EXPERT_FOUND

@@ -1,5 +1,6 @@
 from traceback import print_tb
 from django.shortcuts import render, redirect
+from services.view.exceptions import RepeatedRequestException
 from users.models.customer import Customer
 from users.models.expert import Expert
 
@@ -23,12 +24,15 @@ class ServiceView:
                 customer=request.user,
             )
 
-            if form.is_valid():
-                request = form.save()
-                msg = "request sent"
-                return redirect("/users")
+            try:
+                if form.is_valid():
+                    request = form.save()
+                    msg = "request sent"
+                    return redirect("/users")
+                msg = form.errors
+            except RepeatedRequestException:
+                msg = "یک درخواست از این نوع سرویس در حال انجام است."
 
-            msg = form.errors
         else:
             form = ServiceRequestForm(expert=expert, customer=request.user)
             if not expert:
@@ -51,17 +55,19 @@ class ServiceView:
         if request.method == "POST":
             form = ServiceRequestFromSystemForm(request.POST)
             if form.is_valid():
-                service_request = form.save(request.user, self.controller)
-                print(service_request)
-                print(service_request.id)
-                msg = "request sent"
-                if service_request.status == RequestStatus.NO_EXPERT_FOUND:
-                    return redirect("/users")
-                else:
-                    return redirect(
-                        f"/services/request/finding?request_id={service_request.id}"
-                    )
-            msg = form.errors
+                try:
+                    service_request = form.save(request.user, self.controller)
+                    print(service_request)
+                    print(service_request.id)
+                    msg = "request sent"
+                    if service_request.status == RequestStatus.NO_EXPERT_FOUND:
+                        return redirect("/users")
+                    else:
+                        return redirect(
+                            f"/services/request/finding?request_id={service_request.id}"
+                        )
+                except RepeatedRequestException:
+                    msg = "یک درخواست از این نوع سرویس در حال انجام است."
         else:
             form = ServiceRequestFromSystemForm()
         return render(
