@@ -155,9 +155,10 @@ class ServiceView:
             return redirect("/users")
 
     def experts_list(self, request):
+        query = request.GET.get("q")
         user_type = request.user.get_user_type_str()
         # filter based on user.role type
-        experts = self.controller.get_all_experts()
+        experts = self.controller.get_all_experts(query)
         return render(
             request=request,
             template_name="services/experts-list.html",

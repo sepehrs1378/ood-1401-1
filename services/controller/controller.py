@@ -127,10 +127,25 @@ class ServiceController:
         req.status = RequestStatus.FINISHED
         req.save()
 
-    def get_all_experts(self) -> List[User]:
-        return list(
-            User.objects.filter(
-                role__polymorphic_ctype=ContentType.objects.get_for_model(Expert)
+    def get_all_experts(self, query=None) -> List[User]:
+        return (
+            list(
+                filter(
+                    lambda user: query in user.username or query in user.name,
+                    list(
+                        User.objects.filter(
+                            role__polymorphic_ctype=ContentType.objects.get_for_model(
+                                Expert
+                            ),
+                        )
+                    ),
+                )
+            )
+            if query is not None
+            else list(
+                User.objects.filter(
+                    role__polymorphic_ctype=ContentType.objects.get_for_model(Expert),
+                )
             )
         )
 
