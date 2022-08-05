@@ -96,6 +96,7 @@ class ServiceRequestFromSystemForm(forms.Form):
             status=RequestStatus.NO_EXPERT_FOUND,
             request_type=RequestType.SYSTEM_SELECTED,
         )
+        print(eligible_experts)
         for expert in eligible_experts:
             service_request = ServiceRequest(
                 customer=customer,
@@ -104,7 +105,6 @@ class ServiceRequestFromSystemForm(forms.Form):
                 status=RequestStatus.WAIT_FOR_EXPERT_APPROVAL,
                 request_type=RequestType.SYSTEM_SELECTED,
             )
-            return service_request
 
         service_request.save()
         return service_request

@@ -1,3 +1,4 @@
+from traceback import print_tb
 from django.shortcuts import render, redirect
 from users.models.customer import Customer
 from users.models.expert import Expert
@@ -51,6 +52,8 @@ class ServiceView:
             form = ServiceRequestFromSystemForm(request.POST)
             if form.is_valid():
                 service_request = form.save(request.user, self.controller)
+                print(service_request)
+                print(service_request.id)
                 msg = "request sent"
                 if service_request.expert is None:
                     return redirect("/users")
