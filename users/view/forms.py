@@ -287,9 +287,9 @@ class CustomerEditProfileForm(UserUpdateForm):
     def clean(self):
         if (self.cleaned_data["password1"] != self.cleaned_data["password2"]):
             raise forms.ValidationError("دو رمز عبور واردشده یکسان نمی باشند.")
-        if (UserController.check_username_is_repetitive(self.customer.pk, self.cleaned_data["username"])):
+        elif (UserController.check_username_is_repetitive(self.customer.pk, self.cleaned_data["username"])):
             raise forms.ValidationError("نام کاربری وارد شده تکرای می باشد.")
-        if (UserController.check_email_is_repetitive(self.customer.pk, self.cleaned_data["email"])):
+        elif (UserController.check_email_is_repetitive(self.customer.pk, self.cleaned_data["email"])):
             raise forms.ValidationError("ایمیل وارد شده تکرای می باشد.")
         
     class Meta(UserUpdateForm.Meta):
@@ -374,16 +374,20 @@ class CustomerEditProfileForm(UserUpdateForm):
         )
 
 
-class ExpertEditProfileForm(UserRegisterForm):
+class ExpertEditProfileForm(UserUpdateForm):
     document = forms.FileField()
     expertise = forms.ModelChoiceField(queryset=Service.objects.all(), required=True)
 
     def clean(self):
-        pass
-        #TODO
+        if (self.cleaned_data["password1"] != self.cleaned_data["password2"]):
+            raise forms.ValidationError("دو رمز عبور واردشده یکسان نمی باشند.")
+        elif (UserController.check_username_is_repetitive(self.expert.pk, self.cleaned_data["username"])):
+            raise forms.ValidationError("نام کاربری وارد شده تکرای می باشد.")
+        elif (UserController.check_email_is_repetitive(self.expert.pk, self.cleaned_data["email"])):
+            raise forms.ValidationError("ایمیل وارد شده تکرای می باشد.")
 
-    class Meta(UserRegisterForm.Meta):
-        fields = UserRegisterForm.Meta.fields + (
+    class Meta(UserUpdateForm.Meta):
+        fields = UserUpdateForm.Meta.fields + (
             "expertise",
             "document",
         )
@@ -399,6 +403,7 @@ class ExpertEditProfileForm(UserRegisterForm):
         expert.save()
 
     def __init__(self, expert, *args, **kwargs) -> None:
+        self.expert = expert
         super().__init__(*args, **kwargs)
 
         self.fields["username"].initial = expert.username
