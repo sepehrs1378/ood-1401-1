@@ -6,7 +6,6 @@
             <img src="{% static 'icons/account.svg' %}" />
         </div>
         <div class="">{{ user.name }}</div>
-        <!-- <button type="button" class="btn btn-outline-success status">آنلاین</button> -->
 
         <div class="btn-group dropleft status" dir="ltr">
             {% if user.role.status %}
@@ -37,7 +36,7 @@
         <span class="material-symbols-outlined">
             person
         </span>
-        <div class="px-4">صفحه پروفایل</div>
+        <div class="px-4"><a href="/users/profile/expert">صفحه پروفایل</a></div>
     </div>
     <div class="container py-3 d-flex align-items-center sidebar-item">
         <span class="material-symbols-outlined">
