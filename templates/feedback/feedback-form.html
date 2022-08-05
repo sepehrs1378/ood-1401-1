@@ -1,0 +1,76 @@
+{% load crispy_forms_tags %}
+
+<!--Register-->
+<div class="container w-50 form-container mt-0">
+    <div class="form-header">
+        <h3>
+            ثبت بازخورد
+        </h3>
+    </div>
+    <div class="form-body form-link complete-rtl">
+        <div class="my-3">
+            <h3>ثبت بازخورد</h3>
+            <p class="sub-color">
+                لطفا بازخورد خود را از سرویس دریافت شده و متخصص ثبت کنید و ما را در بهبود خدمات یاری کنید.
+            </p>
+        </div>
+
+        {% if msg %}
+        <div class="alert alert-danger" style="direction: ltr; text-align: left">
+            {{ msg }}
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between">
+            <div class="my-4 w-100 mx-3">
+                {% for field in form %}
+                {% if "metric" in field.name %}
+
+                <div class="d-flex justify-content-between metric-row my-4">
+                    {{ field.label }}
+                    <div class="rating my-2">
+                        <input id="rating1_{{ forloop.counter }}" type="radio" name="rating_{{ forloop.counter }}"
+                            value="1" onclick="radioButtonClick('{{ forloop.counter }}', 1)">
+                        <label for="rating1_{{ forloop.counter }}">1</label>
+                        <input id="rating2_{{ forloop.counter }}" type="radio" name="rating_{{ forloop.counter }}"
+                            value="2" onclick="radioButtonClick('{{ forloop.counter }}', 2)">
+                        <label for="rating2_{{ forloop.counter }}">2</label>
+                        <input id="rating3_{{ forloop.counter }}" type="radio" name="rating_{{ forloop.counter }}"
+                            value="3" onclick="radioButtonClick('{{ forloop.counter }}', 3)">
+                        <label for="rating3_{{ forloop.counter }}">3</label>
+                        <input id="rating4_{{ forloop.counter }}" type="radio" name="rating_{{ forloop.counter }}"
+                            value="4" onclick="radioButtonClick('{{ forloop.counter }}', 4)">
+                        <label for="rating4_{{ forloop.counter }}">4</label>
+                        <input id="rating5_{{ forloop.counter }}" type="radio" name="rating_{{ forloop.counter }}"
+                            value="5" onclick="radioButtonClick('{{ forloop.counter }}', 5)">
+                        <label for="rating5_{{ forloop.counter }}">5</label>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+                <form method="POST">
+                    {% csrf_token %} {% crispy form %}
+                </form>
+            </div>
+
+            {% if form.errors %}
+            {% for field in form %}
+            {% for error in field.errors %}
+            <div class="alert alert-danger">
+                {{ error|escape }}
+            </div>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function radioButtonClick(field_index, rate) {
+        field_index -= 2;
+        console.log(field_index, rate, $('#id_metric-' + field_index + '_' + rate));
+        $('#id_metric-' + field_index + '_' + rate).prop("checked", true);
+    }
+</script>
