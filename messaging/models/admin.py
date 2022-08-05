@@ -1,6 +1,8 @@
 from django.contrib import admin
-from .ticket import Ticket, TicketMessage
-from .message import Channel, Message
+from .ticket import Ticket
+from .ticket_message import TicketMessage
+from .channel import Channel
+from .message import Message
 
 
 class TicketAdmin(admin.ModelAdmin):

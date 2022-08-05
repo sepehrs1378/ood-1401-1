@@ -1,14 +1,13 @@
 from datetime import datetime
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from messaging.models import ticket
-from messaging.models.ticket import Ticket, TicketMessage, TicketStatus
 from django.views.decorators.csrf import csrf_exempt
 import json
 
 from messaging.view.forms import TicketForm, TicketMessageForm
 from messaging.controller.controller import MessagingController
-
+from messaging.models.ticket import Ticket, TicketStatus
+from messaging.models.ticket_message import TicketMessage
 
 class MessagingView:
     def __init__(self, controller: MessagingController) -> None:
