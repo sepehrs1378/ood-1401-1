@@ -159,3 +159,29 @@ html {
     /* Linear/Dark Blue */
     color: #344767;
 }
+
+.service-info-icon {
+    font-size: 100px !important;
+    margin-top: -70px;
+    margin-right: -10px;
+}
+
+.service-info-icon:hover {
+    color: #DA1F63;
+    cursor: pointer;
+}
+
+.service-card-title:hover {
+    color: #DA1F63;
+    cursor: pointer;
+}
+
+.search-container {
+    flex-direction: row;
+    justify-items: center;
+    justify-content: center;
+}
+
+.search-inner {
+    width: 50%;
+}

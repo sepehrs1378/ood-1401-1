@@ -28,7 +28,7 @@ class ServiceController:
         except Exception as e:
             return None
 
-    def get_service_category_trees(self) -> List[Dict]:
+    def get_service_category_trees(self, query=None) -> List[Dict]:
         root_services = ServiceCategory.objects.filter(parent=None)
         service_json = []
         for root in root_services:
@@ -39,25 +39,28 @@ class ServiceController:
                 "children": [],
             }
             service_json.append(obj)
-            self.append_children(obj["children"], root)
+            self.append_children(obj["children"], root, query)
 
         return service_json
 
     def append_children(
-        self, children_list: List, parent: Union[ServiceCategory, Service]
+        self, children_list: List, parent: Union[ServiceCategory, Service], query: str
     ) -> None:
         children = ServiceCategory.objects.filter(parent=parent)
 
         if len(children) == 0:
             services = Service.objects.filter(category=parent)
             for service in services:
-                children_list.append(
-                    {
-                        "name": service.name,
-                        "id": service.id,
-                        "desc": service.description,
-                    }
-                )
+                if query is None or (
+                    query in service.name or query in service.description
+                ):
+                    children_list.append(
+                        {
+                            "name": service.name,
+                            "id": service.id,
+                            "desc": service.description,
+                        }
+                    )
         else:
             for child in children:
                 obj = {
@@ -67,7 +70,7 @@ class ServiceController:
                     "children": [],
                 }
                 children_list.append(obj)
-                self.append_children(obj["children"], child)
+                self.append_children(obj["children"], child, query)
 
     def get_request_by_id(self, request_id: int) -> Union[ServiceRequest, None]:
         try:

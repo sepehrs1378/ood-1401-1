@@ -26,6 +26,17 @@
                         خدمات در این سامانه به دسته‌هایی تقسیم می شوند که در پایین مشاهده می کنید.
                     </p>
                 </div>
+
+                <div class="w-100 d-flex search-container my-4">
+                    <div class="input-group search-inner">
+                        <input type="search" id="search_field" class="form-control rounded"
+                            placeholder="نام سرویس یا دسته‌بندی" aria-label="Search" aria-describedby="search-addon" />
+                        <button type="button" class="btn btn-pink" onclick="getServices($('#search_field').val())">
+                            جست‌و‌جو
+                        </button>
+                    </div>
+                </div>
+
                 <div class="d-flex justify-content-between">
                     {% include 'services/service-card.html' %}
                     {% include 'services/tree-view.html' %}
@@ -34,5 +45,24 @@
         </div>
     </div>
 </div>
+
+<script>
+    function getServices(query) {
+        if (query != null && query.length > 0)
+            window.location = "/services/list?q=" + query;
+        else
+            window.location = "/services/list";
+    }
+
+    document.getElementById("search_field").addEventListener("keypress", function (event) {
+        // If the user presses the "Enter" key on the keyboard
+        if (event.key === "Enter") {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+            getServices($('#search_field').val());
+        }
+    }); 
+</script>
 
 {% endblock %}

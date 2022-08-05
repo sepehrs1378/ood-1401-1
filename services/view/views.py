@@ -168,8 +168,11 @@ class ServiceView:
         )
 
     def services_list(self, request):
+        query = request.GET.get("q")
         return render(
             request=request,
             template_name="services/service-list.html",
-            context={"all_services_tree": self.controller.get_service_category_trees},
+            context={
+                "all_services_tree": self.controller.get_service_category_trees(query)
+            },
         )
