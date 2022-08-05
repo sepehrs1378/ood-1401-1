@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "reporting",
     "crispy_forms",
     "polymorphic",
+    "star_ratings",
 ]
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"

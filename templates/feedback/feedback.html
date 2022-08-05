@@ -1,0 +1,32 @@
+{% extends "includes/base.html" %}
+{% load static %}
+{% load ratings %}
+
+{% block content %}
+<div class="main-box">
+    {% if user_type == "Customer" %}
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        خانه / صفحه مشتری / بازخورد
+    </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'users/customer/sidebar.html' %}   
+        {% include "feedback/feedback-form.html" %}
+    </div>
+    {% else %}
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        خانه / صفحه متخصص / بازخورد
+    </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'users/expert/sidebar.html' %}    
+        {% include "feedback/feedback-form.html" %}
+    </div>
+    {% endif %}
+
+    <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+    <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+    {% ratings object %}
+</div>
+
+{% endblock %}
