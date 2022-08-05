@@ -63,6 +63,8 @@ then go to localhost:8000/admin
 /messagin/ticket/create --> create a new ticket
 /messaging/ticket/send --> send a new message to ticket
 /messaging/ticket/show --> show a ticket details
+/users/profile/customer --> edit customer profile
+/users/profile/expert --> edit expert profile
 ```
 
 ## Sub-systems (= django apps)
