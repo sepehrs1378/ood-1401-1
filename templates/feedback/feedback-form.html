@@ -4,15 +4,22 @@
 <div class="container w-50 form-container mt-0">
     <div class="form-header">
         <h3>
-            ثبت بازخورد
+            بازخورد دریافت شده
         </h3>
     </div>
     <div class="form-body form-link complete-rtl">
         <div class="my-3">
+            {% if request.user.get_user_type_str == "customer" %}
             <h3>ثبت بازخورد</h3>
             <p class="sub-color">
                 لطفا بازخورد خود را از سرویس دریافت شده و متخصص ثبت کنید و ما را در بهبود خدمات یاری کنید.
             </p>
+            {% else %}
+            <h3>بازخورد دریافت شده از خدمت</h3>
+            <p class="sub-color">
+                بازخورد ثبت شده توسط مشتری را مشاهده می کنید.
+            </p>
+            {% endif %}
         </div>
 
         {% if msg %}
@@ -23,6 +30,7 @@
 
         <div class="d-flex justify-content-between">
             <div class="my-4 w-100 mx-3">
+                {% if not is_expert %}
                 {% for field in form %}
                 {% if "metric" in field.name %}
 
@@ -48,6 +56,7 @@
                 </div>
                 {% endif %}
                 {% endfor %}
+                {% endif %}
 
                 <form method="POST">
                     {% csrf_token %} {% crispy form %}

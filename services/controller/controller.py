@@ -1,4 +1,6 @@
+import math
 from typing import Dict, List, Union
+from feedback.models.feedback import Feedback
 from services.models.service import Service
 from services.models.service_category import ServiceCategory
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
@@ -129,6 +131,21 @@ class ServiceController:
                 )
             )
         )
+
+    def get_average_rate(self, expert):
+        try:
+            service_requests = ServiceRequest.objects.filter(expert=expert)
+            rate_sum = 0
+            rate_count = 0
+            for service in service_requests:
+                feedback = Feedback.objects.filter(service_request=service).first()
+                for rate in feedback.feedbacks.all():
+                    rate_sum = rate_sum + rate.rate
+                    rate_count = rate_count + 1
+            return round(rate_sum / rate_count, ndigits=2)
+        except Exception as e:
+            print(e)
+            return 0
 
     def approve_request(self, request_id: int, expert: User) -> None:
         req = ServiceRequest.objects.filter(pk=request_id).first()

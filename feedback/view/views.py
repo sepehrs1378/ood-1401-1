@@ -13,6 +13,7 @@ class FeedbackView:
                 request=request.POST,
                 metrics=evaluation_metrics,
                 request_id=request_id,
+                is_editable=True,
             )
             if form.is_valid():
                 feedback = form.save()
@@ -23,10 +24,35 @@ class FeedbackView:
             form = FeedbackForm(
                 metrics=evaluation_metrics,
                 request_id=request_id,
+                is_editable=True,
             )
 
         return render(
             request=request,
             template_name="feedback/send-feedback-page.html",
-            context={"form": form, "msg": msg},
+            context={
+                "is_expert": False,
+                "form": form,
+                "msg": msg,
+            },
+        )
+
+    def get_feedback(self, request, request_id):
+        msg = ""
+        evaluation_metrics = EvaluationMetric.objects.all()
+        form = FeedbackForm(
+            metrics=evaluation_metrics,
+            request_id=request_id,
+            is_editable=False,
+        )
+        form.initiate_from_feedback()
+
+        return render(
+            request=request,
+            template_name="feedback/send-feedback-page.html",
+            context={
+                "is_expert": True,
+                "form": form,
+                "msg": msg,
+            },
         )

@@ -1,10 +1,11 @@
 from traceback import print_tb
 from django.shortcuts import render, redirect
+from feedback.models.feedback import Feedback
 from services.view.exceptions import RepeatedRequestException
 from users.models.customer import Customer
 from users.models.expert import Expert
 
-from services.models.service_request import RequestStatus, RequestType
+from services.models.service_request import RequestStatus, RequestType, ServiceRequest
 from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm
 from services.controller.controller import ServiceController
 
@@ -165,6 +166,9 @@ class ServiceView:
         user_type = request.user.get_user_type_str()
         # filter based on user.role type
         experts = self.controller.get_all_experts(query)
+        for expert in experts:
+            expert.rate = self.controller.get_average_rate(expert)
+        experts.sort(key=lambda x: x.rate, reverse=True)
         return render(
             request=request,
             template_name="services/experts-list.html",

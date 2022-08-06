@@ -112,5 +112,8 @@ class MessagingView:
         return render(
             request=request,
             template_name="messaging/chatroom.html",
-            context={"channels": channels},
+            context={
+                "channels": channels,
+                "user_type": request.user.get_user_type_str(),
+            },
         )

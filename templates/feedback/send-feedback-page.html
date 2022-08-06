@@ -10,7 +10,11 @@
         خانه / صفحه مشتری / ثبت نظر
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% if request.user.get_user_type_str == "customer" %}
         {% include 'users/customer/sidebar.html' %}
+        {% else %}
+        {% include 'users/expert/sidebar.html' %}
+        {% endif %}
         {% include 'feedback/feedback-form.html' %}
     </div>
 </div>

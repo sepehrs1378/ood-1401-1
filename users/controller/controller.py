@@ -3,7 +3,7 @@ from users.models.user import User
 from users.models.expert import Expert
 from users.models.customer import Customer
 from services.models.service_request import ServiceRequest
-from django.db.models import Q
+
 
 class UserController:
     def get_service_requests_list(self, user: User):
@@ -20,13 +20,12 @@ class UserController:
             user_role = user.role
             user_role.status = not user_role.status
             user_role.save()
-    
+
     def get_user_info(self, user: User):
         return User.objects.get(username=user.username)
-    
+
     def check_username_is_repetitive(myPk, myUsername):
-        return User.objects.filter(~Q(pk = myPk) & Q(username = myUsername)).exists()
+        return User.objects.filter(~Q(pk=myPk) & Q(username=myUsername)).exists()
 
     def check_email_is_repetitive(myPk, myEmail):
-        return User.objects.filter(~Q(pk = myPk) & Q(email = myEmail)).exists()
-
+        return User.objects.filter(~Q(pk=myPk) & Q(email=myEmail)).exists()
