@@ -8,6 +8,11 @@ urlpatterns = [
     path(
         "send/<int:request_id>",
         feedback_view.send_feedback,
-        name="request_service_from_expert",
+        name="feedback_send",
+    ),
+    path(
+        "get/<int:request_id>",
+        feedback_view.get_feedback,
+        name="feedback_get",
     ),
 ]

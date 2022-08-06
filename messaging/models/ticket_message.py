@@ -13,12 +13,22 @@ class TicketMessage(models.Model):
     """
 
     ticket = models.ForeignKey(
-        Ticket, on_delete=models.CASCADE, blank=False, null=False
+        Ticket,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        default=None,
     )
     text = models.TextField()
     file = models.FileField()
     time = models.DateField(default=now)
-    sender = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
+    sender = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self) -> str:
         return f"message: {self.text}"

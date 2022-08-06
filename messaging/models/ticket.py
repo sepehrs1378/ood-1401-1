@@ -19,7 +19,11 @@ class Ticket(models.Model):
     """
 
     creator = models.ForeignKey(
-        User, blank=False, null=False, on_delete=models.CASCADE
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        default=None,
     )  # to avoid inheritance problems, we use pk of user
     topic = models.CharField(max_length=30)
     time_of_creation = models.DateField(default=now)

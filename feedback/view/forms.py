@@ -6,7 +6,7 @@ import feedback
 from feedback.models.evaluation_feedback import EvaluationFeedback
 from feedback.models.evaluation_metric import EvaluationMetric
 from feedback.models.feedback import Feedback
-from services.models.service_request import ServiceRequest
+from services.models.service_request import RequestStatus, ServiceRequest
 
 
 RATE_CHOICES = [
@@ -32,7 +32,7 @@ class FeedbackForm(forms.Form):
         help_text=None,
     )
 
-    def __init__(self, metrics, request_id, request=None, **kwargs):
+    def __init__(self, metrics, request_id, is_editable, request=None, **kwargs):
         super(FeedbackForm, self).__init__(request, **kwargs)
 
         self.fields["description"].required = False
@@ -40,12 +40,7 @@ class FeedbackForm(forms.Form):
         self.request_id = request_id
 
         self.helper = FormHelper(self)
-        self.helper.layout = Layout(
-            Div(
-                "description",
-                css_class="w-100",
-            )
-        )
+        self.helper.layout = Layout()
 
         for index, metric in enumerate(metrics):
             self.fields[f"metric-{index}"] = forms.ChoiceField(
@@ -57,10 +52,16 @@ class FeedbackForm(forms.Form):
             self.helper.layout.fields.append(
                 Div(
                     f"metric-{index}",
-                    css_class="metric-entry",
+                    css_class="metric-entry" if is_editable else "",
                     css_id=f"metric-{index}",
                 ),
             )
+        self.helper.layout.fields.append(
+            Div(
+                "description",
+                css_class="w-100",
+            )
+        )
 
         self.helper.layout.fields.append(
             Submit(
@@ -77,9 +78,25 @@ class FeedbackForm(forms.Form):
             customer_description=self.cleaned_data["description"],
         )
         for index, metric in enumerate(self.metrics):
-            evaluation_feedback = EvaluationFeedback.objects.create(
+            EvaluationFeedback.objects.create(
                 rate=int(self.cleaned_data[f"metric-{index}"]),
                 evaluation_metric=metric,
                 feedback=feedback,
             )
+        service_request.status = RequestStatus.FEEDBACK_RECEIVED
+        service_request.save()
         return feedback
+
+    def initiate_from_feedback(self):
+        service_request = ServiceRequest.objects.filter(pk=self.request_id).first()
+        feedback = Feedback.objects.filter(service_request=service_request).first()
+
+        for index, rate in enumerate(feedback.feedbacks.all()):
+            self.fields[f"metric-{index}"].initial = str(rate.rate)
+
+        self.fields["description"].initial = feedback.customer_description
+
+        for field in self.fields.keys():
+            self.fields[field].disabled = True
+
+        self.helper.layout.fields = self.helper.layout.fields[:-1]

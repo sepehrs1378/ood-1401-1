@@ -12,8 +12,18 @@ class Message(models.Model):
     """
 
     channel = models.ForeignKey(
-        Channel, blank=False, null=False, on_delete=models.CASCADE
+        Channel,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        default=None,
     )
-    sender = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
+    sender = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        default=None,
+    )
     time = models.DateField(default=now)
-    text = models.TextField()
+    text = models.TextField(default="")

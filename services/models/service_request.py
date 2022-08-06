@@ -1,4 +1,3 @@
-from django.utils.timezone import now
 from django.db import models
 from services.models.service import Service
 from django.utils.translation import gettext as _
