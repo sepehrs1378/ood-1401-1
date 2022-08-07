@@ -1,10 +1,11 @@
-from django.contrib.contenttypes.models import ContentType
 from typing import Dict, List, Union
+from django.contrib.contenttypes.models import ContentType
 
-from services.models.request_reject_relation import RequestRejectionRelation
+from feedback.models.feedback import Feedback
 from services.models.service import Service
 from services.models.service_category import ServiceCategory
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
+from users.models import user
 from users.models.expert import Expert
 from users.models.user import User
 from messaging.models import Channel, Message
@@ -30,35 +31,49 @@ class ServiceController:
         except Exception as e:
             return None
 
-    def get_service_category_trees(self) -> List[Dict]:
+    def get_service_category_trees(self, query=None) -> List[Dict]:
         root_services = ServiceCategory.objects.filter(parent=None)
         service_json = []
         for root in root_services:
-            obj = {"name": root.name, "id": root.id, "children": []}
+            obj = {
+                "name": root.name,
+                "id": root.id,
+                "desc": root.description,
+                "children": [],
+            }
             service_json.append(obj)
-            self.append_children(obj["children"], root)
+            self.append_children(obj["children"], root, query)
 
         return service_json
 
     def append_children(
-        self, children_list: List, parent: Union[ServiceCategory, Service]
+        self, children_list: List, parent: Union[ServiceCategory, Service], query: str
     ) -> None:
         children = ServiceCategory.objects.filter(parent=parent)
 
         if len(children) == 0:
             services = Service.objects.filter(category=parent)
             for service in services:
-                children_list.append(
-                    {
-                        "name": service.name,
-                        "id": service.id,
-                    }
-                )
+                if query is None or (
+                    query in service.name or query in service.description
+                ):
+                    children_list.append(
+                        {
+                            "name": service.name,
+                            "id": service.id,
+                            "desc": service.description,
+                        }
+                    )
         else:
             for child in children:
-                obj = {"name": child.name, "id": child.id, "children": []}
+                obj = {
+                    "name": child.name,
+                    "id": child.id,
+                    "desc": child.description,
+                    "children": [],
+                }
                 children_list.append(obj)
-                self.append_children(obj["children"], child)
+                self.append_children(obj["children"], child, query)
 
     def get_request_by_id(self, request_id: int) -> Union[ServiceRequest, None]:
         try:
@@ -75,28 +90,9 @@ class ServiceController:
             return None
 
     def reject_request(self, req: ServiceRequest, expert: User) -> None:
-        # Default is no expert found
-        req.status = RequestStatus.NO_EXPERT_FOUND
-
-        # Record rejection
-        RequestRejectionRelation.objects.create(expert=expert, request=req)
-
         if req.request_type == RequestType.SYSTEM_SELECTED:
-            # All eligible experts
-            eligible_experts = self.get_eligible_experts(req.service)
-            # Experts that rejected the request
-            rejected_experts = list(
-                map(
-                    lambda rejection: rejection.expert,
-                    list(RequestRejectionRelation.objects.filter(request=req)),
-                )
-            )
-
-            for expert in eligible_experts:
-                if expert not in rejected_experts:
-                    req.expert = expert
-                    req.status = RequestStatus.WAIT_FOR_EXPERT_APPROVAL
-                    break
+            req.status = RequestStatus.WAIT_FOR_EXPERT_APPROVAL
+            req.expert = None
         else:
             req.status = RequestStatus.REJECTED_BY_EXPERT
 
@@ -117,15 +113,46 @@ class ServiceController:
         req.status = RequestStatus.FINISHED
         req.save()
 
-    def get_all_experts(self) -> List[User]:
-        return list(
-            User.objects.filter(
-                role__polymorphic_ctype=ContentType.objects.get_for_model(Expert)
+    def get_all_experts(self, query=None) -> List[User]:
+        return (
+            list(
+                filter(
+                    lambda user: query in user.username or query in user.name,
+                    list(
+                        User.objects.filter(
+                            role__polymorphic_ctype=ContentType.objects.get_for_model(
+                                Expert
+                            ),
+                        )
+                    ),
+                )
+            )
+            if query is not None
+            else list(
+                User.objects.filter(
+                    role__polymorphic_ctype=ContentType.objects.get_for_model(Expert),
+                )
             )
         )
 
+    def get_average_rate(self, expert):
+        try:
+            service_requests = ServiceRequest.objects.filter(expert=expert)
+            rate_sum = 0
+            rate_count = 0
+            for service in service_requests:
+                feedback = Feedback.objects.filter(service_request=service).first()
+                for rate in feedback.feedbacks.all():
+                    rate_sum = rate_sum + rate.rate
+                    rate_count = rate_count + 1
+            return round(rate_sum / rate_count, ndigits=2)
+        except Exception as e:
+            print(e)
+            return 0
+
     def approve_request(self, request_id: int, expert: User) -> None:
-        req = self.get_request_by_id_and_expert(request_id, expert)
+        req = ServiceRequest.objects.filter(pk=request_id).first()
+        req.expert = expert
         if req.request_type == RequestType.SYSTEM_SELECTED:
             req.status = RequestStatus.EXPERT_FOUND
         else:

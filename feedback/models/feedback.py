@@ -16,3 +16,6 @@ class Feedback(models.Model):
 
     # other opinions of the customer (also when request is canceled)
     customer_description = models.TextField()
+
+    def __str__(self) -> str:
+        return f"{self.service_request} - {self.time_of_completion} - {self.customer_description}"

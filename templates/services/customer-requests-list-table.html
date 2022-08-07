@@ -3,7 +3,6 @@
         <tr>
             <th class="list-header-column" scope="col">عملیات</th>
             <th class="list-header-column" scope="col">وضعیت درخواست</th>
-            <th class="list-header-column" scope="col">امتیاز</th>
             <th class="list-header-column" scope="col">نوع سرویس</th>
             <th class="list-header-column" scope="col">متخصص</th>
             <th class="list-header-column" scope="col">تاریخ</th>
@@ -25,14 +24,13 @@
                     ...
                 </button>
                 <div class="dropdown-menu complete-rtl">
-                    <a class="dropdown-item" href="#">ثبت نظر</a>
+                    <a class="dropdown-item" href="/feedback/send/{{ request.id }}">ثبت نظر</a>
                 </div>
                 {% endif %}
             </td>
             <td>
                 {{ request.get_status_display}}
             </td>
-            <td>3/5</td>
             <td>{{ request.service }}</td>
             <td>{{ request.expert.name }}</td>
             <td id="date-item-{{ request.id }}">
