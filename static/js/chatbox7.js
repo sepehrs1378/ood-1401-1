@@ -1,5 +1,6 @@
 var selected_channel = null;
 var selected_contact_name = null;
+var is_for_chat = null;
 const chatbox_interval = setInterval(update_chatbox, 1000)
 
 async function update_chatbox() {
@@ -27,7 +28,12 @@ async function update_chatbox() {
             }
         }
 
-        xhr.open("GET", `/messaging/chatroom/channel/${selected_channel}/get-messages/`);
+        if (is_for_chat) {
+            xhr.open("GET", `/messaging/chatroom/channel/${selected_channel}/get-messages/`);
+        }
+        else {
+            xhr.open("GET", `/messaging/ticket/${selected_channel}/get-messages/`);
+        }
         xhr.send(null);
     }
 }
@@ -45,7 +51,12 @@ function send_message() {
         }
 
         body = `text:${msg}`;
-        xhr.open("POST", `/messaging/chatroom/channel/${selected_channel}/send/`);
+        if (is_for_chat) {
+            xhr.open("POST", `/messaging/chatroom/channel/${selected_channel}/send/`);
+        }
+        else {
+            xhr.open("POST", `/messaging/ticket/${selected_channel}/send/`);
+        }
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send(body);
     }
@@ -56,8 +67,12 @@ function set_selected_channel(ch, contact_name) {
     selected_contact_name = contact_name;
 
     // Update contact name
-    contact_name_header = document.getElementById('contact-name');
+    contact_name_header = document.getElementById('chat-header');
     contact_name_header.innerHTML = contact_name;
 
     update_chatbox();
+}
+
+function set_is_for_chat(bool) {
+    is_for_chat = bool;
 }

@@ -4,10 +4,8 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from messaging.view.forms import TicketForm, TicketMessageForm
+from messaging.view.forms import TicketForm
 from messaging.controller.controller import MessagingController
-from messaging.models.ticket import Ticket, TicketStatus
-from messaging.models.ticket_message import TicketMessage
 
 
 class MessagingView:
@@ -17,74 +15,59 @@ class MessagingView:
     def create_ticket(self, request):
         msg = ""
         if request.method == "POST":
-            form = TicketForm(
-                request.POST,
-                initial={
-                    "creator": request.user.id,
-                    "time_of_creation": datetime.now(),
-                    "status": TicketStatus.CREATED,
-                },
-            )
+            form = TicketForm(request.POST)
             if form.is_valid():
-                request = form.save()
+                form_data = form.cleaned_data
+                self.controller.create_ticket(
+                    request.user, form_data["title"], form_data["text"]
+                )
                 msg = "request sent"
-                return redirect("/users")
+                return redirect("/users/")
             msg = form.errors
-        form = TicketForm(
-            initial={
-                "creator": request.user.id,
-                "time_of_creation": datetime.now(),
-                "status": TicketStatus.CREATED,
-            },
-        )
+        elif request.method == "GET":
+            form = TicketForm()
+
         return render(
             request=request,
             template_name="messaging/create_ticket.html",
             context={"request_form": form, "msg": msg},
         )
 
-    def show_ticket(self, request, ticket_id):
-        ticket = Ticket.objects.filter(pk=ticket_id).first()
-        try:
-            messages = list(TicketMessage.objects.filter(ticket=ticket))
-        except Exception as e:
-            messages = []
+    def show_all_tickets(self, request):
+        ticket_channels = self.controller.get_ticket_channels(request.user)
+        user_type = request.user.get_user_type_str()
 
         return render(
             request=request,
-            template_name="messaging/show_ticket.html",
-            context={"ticket": ticket, "ticket_messages": messages},
-        )
-
-    def send_ticket(self, request, ticket_id):
-        msg = ""
-        if request.method == "POST":
-            form = TicketMessageForm(
-                request.POST,
-                request.FILES,
-                initial={
-                    "sender": request.user.id,
-                    "ticket": ticket_id,
-                    "time": datetime.now(),
-                },
-            )
-            if form.is_valid():
-                request = form.save()
-                msg = "request sent"
-                return redirect("/messaging/ticket/show/" + str(ticket_id))
-            msg = form.errors
-        form = TicketMessageForm(
-            initial={
-                "sender": request.user.id,
-                "ticket": ticket_id,
-                "time": datetime.now(),
+            template_name="messaging/chatroom.html",
+            context={
+                "channels": ticket_channels,
+                "user_type": user_type,
+                "is_for_chat": False,
             },
         )
-        return render(
-            request=request,
-            template_name="messaging/send_ticket.html",
-            context={"request_form": form, "msg": msg},
+
+    @csrf_exempt
+    def send_ticket_message(self, request, ticket_id):
+        body = request.body.decode()
+        body = {body.split(":")[0]: body.split(":")[1]}
+
+        result = self.controller.send_ticket_message(
+            request.user, ticket_id, body["text"]
         )
+
+        return HttpResponse(result)
+
+    # Returns messages of a ticket channel
+    def get_ticket_messages(self, request, ticket_id):
+        messages = self.controller.get_ticket_messages(request.user, ticket_id)
+        messages = [msg.__dict__ for msg in messages]
+        for i, msg in enumerate(messages):
+            msg = {key: msg[key] for key in msg if not key.startswith("_")}
+            msg["time"] = str(msg["time"])
+            messages[i] = msg
+
+        return HttpResponse(json.dumps(messages))
 
     @csrf_exempt
     def send_message(self, request, channel_id):
@@ -107,13 +90,11 @@ class MessagingView:
         return HttpResponse(json.dumps(messages))
 
     def get_chatroom(self, request):
-        channels = self.controller.get_channels_of_user(request.user)
+        channels = self.controller.get_channels(request.user)
+        user_type = request.user.get_user_type_str()
 
         return render(
             request=request,
             template_name="messaging/chatroom.html",
-            context={
-                "channels": channels,
-                "user_type": request.user.get_user_type_str(),
-            },
+            context={"channels": channels, "user_type": user_type, "is_for_chat": True},
         )

@@ -1,5 +1,6 @@
-import math
 from typing import Dict, List, Union
+from django.contrib.contenttypes.models import ContentType
+
 from feedback.models.feedback import Feedback
 from services.models.service import Service
 from services.models.service_category import ServiceCategory
@@ -7,7 +8,7 @@ from services.models.service_request import RequestStatus, RequestType, ServiceR
 from users.models import user
 from users.models.expert import Expert
 from users.models.user import User
-from django.contrib.contenttypes.models import ContentType
+from messaging.models import Channel, Message
 
 
 class ServiceController:
@@ -105,6 +106,8 @@ class ServiceController:
         req.status = RequestStatus.IN_PROGRESS
         req.save()
 
+        self.__create_channel_for_request(customer, req.expert, req)
+
     def finish_request(self, request_id: int, expert: User) -> None:
         req = ServiceRequest.objects.filter(pk=request_id, expert=expert).first()
         req.status = RequestStatus.FINISHED
@@ -154,4 +157,14 @@ class ServiceController:
             req.status = RequestStatus.EXPERT_FOUND
         else:
             req.status = RequestStatus.IN_PROGRESS
+            self.__create_channel_for_request(req.customer, expert, req)
         req.save()
+
+    def __create_channel_for_request(
+        self, customer: User, expert: User, request: ServiceRequest
+    ):
+        channel = Channel.objects.create(
+            customer=customer, expert=expert, related_service_request=request
+        )
+        starting_msg_text = "این کانال برای گفت‌و‌گوی مشتری و متخصص به وجود آمده است"
+        Message.objects.create(channel=channel, sender=customer, text=starting_msg_text)
