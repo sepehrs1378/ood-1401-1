@@ -13,7 +13,10 @@
             <div class="col-lg-2 col-md-6">
                 <h5 class="text-white mb-3" style="font-weight: bold;">پشتیبانی</h5>
                 <ul class="list-unstyled px-0">
-                    <li><a href="#">ارسال تیکت</a></li>
+                    {% if user_type == "customer" or user_type == "expert" %}
+                    <li><a href="/messaging/ticket/create/">ارسال تیکت</a></li>
+                    {% endif %}
+                    <li><a href="/messaging/ticket/show-all/">مشاهده همه تیکت‌ها</a></li>
                     <li><a href="#">راهنمایی</a></li>
                     <li><a href="#">قوانین</a></li>
                 </ul>

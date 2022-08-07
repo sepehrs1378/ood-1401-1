@@ -1,9 +1,9 @@
-import re
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from users.models.customer import Customer
 from users.models.expert import Expert
-
+from users.models.manager import Manager
+from users.models.it_manager import ITManager
 from users.models.role import Role
 
 
@@ -30,6 +30,10 @@ class User(AbstractUser):
             user_type = "expert"
         elif isinstance(self.role, Customer):
             user_type = "customer"
+        elif isinstance(self.role, Manager):
+            user_type = "manager"
+        elif isinstance(self.role, ITManager):
+            user_type = "it_manager"
         return user_type
 
     def __str__(self):

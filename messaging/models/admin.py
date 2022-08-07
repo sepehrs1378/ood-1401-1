@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .ticket import Ticket
+from .ticket_channel import TicketChannel
 from .ticket_message import TicketMessage
 from .channel import Channel
 from .message import Message
@@ -21,7 +21,7 @@ class MessageAdmin(admin.ModelAdmin):
     pass
 
 
-admin.site.register(Ticket, TicketAdmin)
+admin.site.register(TicketChannel, TicketAdmin)
 admin.site.register(TicketMessage, TicketMesssageAdmin)
 admin.site.register(Channel, ChannelAdmin)
 admin.site.register(Message, MessageAdmin)

@@ -1,21 +1,25 @@
 {% extends "includes/base.html" %}
 
-{% block content %}
-
 {% load crispy_forms_tags %}
 
 {% load static %}
-<script src="{% static 'js/chatbox4.js' %}"></script>
+
+{% block content %}
+
+<script src="{% static 'js/chatbox7.js' %}"></script>
 
 <!-- This the chatroom page containing all chats and the chatbox for the selected chat. -->
 
 <div class="main-box">
+    <script>
+        set_is_for_chat({% if is_for_chat %}true{% else %} false{% endif %})
+    </script>
     <!-- Navigation -->
     <div class="navigation complete-rtl">
         {% if user_type == "customer" %}
-        خانه / صفحه مشتری / جعبه پیام‌ها
+        خانه / صفحه مشتری / {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
         {% else %}
-        خانه / صفحه متخصص / جعبه پیام‌ها
+        خانه / صفحه متخصص / {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
         {% endif %}
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
@@ -26,7 +30,6 @@
         {% endif %}
         {% include 'messaging/chatbox.html' %}
     </div>
-
 </div>
 
 {% endblock %}

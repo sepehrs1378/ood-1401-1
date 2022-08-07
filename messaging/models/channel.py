@@ -29,3 +29,6 @@ class Channel(models.Model):
             return self.customer.id
         else:
             return False
+
+    def __str__(self) -> str:
+        return f"Customer: {self.customer_id} | Expert: {self.expert_id}"
