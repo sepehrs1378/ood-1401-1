@@ -21,3 +21,6 @@ class Expert(Role):
     class Meta:
         verbose_name = "Expert"
         verbose_name_plural = "Experts"
+
+    def __str__(self):
+        return "متخصص"

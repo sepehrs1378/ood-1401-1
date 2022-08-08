@@ -29,3 +29,6 @@ class UserController:
 
     def check_email_is_repetitive(myPk, myEmail):
         return User.objects.filter(~Q(pk=myPk) & Q(email=myEmail)).exists()
+
+    def get_all_users(self):
+        return User.objects.all()

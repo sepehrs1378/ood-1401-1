@@ -12,3 +12,6 @@ class Customer(Role):
     class Meta:
         verbose_name = "Customer"
         verbose_name_plural = "Customers"
+
+    def __str__(self):
+        return "مشتری"
