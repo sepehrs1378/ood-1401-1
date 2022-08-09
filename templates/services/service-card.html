@@ -1,5 +1,5 @@
 <div id="card_container" class="service-card mt-5 p-4 w-50">
-    {% if expert.role.status %}
+    {% if user_type == "it_manager" %}
         <button role="button" type="button" class="btn dropdown material-symbols-outlined service-info-icon"
                 data-toggle="dropdown">
             more

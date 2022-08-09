@@ -51,4 +51,7 @@ urlpatterns = [
         service_view.finding_expert,
         name="finding_expert",
     ),
+    path("categories",
+         service_view.categories_list,
+         name="categories_list"),
 ]

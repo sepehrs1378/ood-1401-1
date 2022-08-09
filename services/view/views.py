@@ -188,3 +188,9 @@ class ServiceView:
                 "all_services_tree": self.controller.get_service_category_trees(query)
             },
         )
+
+    def categories_list(self, request):
+        categories = self.controller.get_categories()
+        return render(request=request, template_name="admin/category-list.html", context={
+            "categories": categories,
+        })
