@@ -184,6 +184,7 @@ class ServiceView:
             request=request,
             template_name="services/service-list.html",
             context={
+                "user_type": request.user.get_user_type_str(),
                 "all_services_tree": self.controller.get_service_category_trees(query)
             },
         )
