@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from feedback.view.forms import FeedbackForm
+from feedback.view.forms import FeedbackForm, MetricForm
 from feedback.models.evaluation_metric import EvaluationMetric
 
 
@@ -66,3 +66,21 @@ class FeedbackView:
                 "metrics": evaluation_metrics,
             }
         )
+
+    def metric(self, request, metric_id:int):
+        msg=""
+        metric = EvaluationMetric.objects.get(id=metric_id)
+        if request.method == "POST":
+            form = MetricForm(request.POST,instance=metric)
+            form.save()
+            return redirect("/feedback/metrics")
+        elif request.method == "delete":
+            metric.delete()
+            return redirect("/feedback/metrics")
+        else:
+            form = MetricForm(instance=metric)
+            return render(
+                request=request,
+                template_name="admin/metric.html",
+                context={"form": form, "msg": msg},
+            )
