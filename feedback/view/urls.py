@@ -15,4 +15,9 @@ urlpatterns = [
         feedback_view.get_feedback,
         name="feedback_get",
     ),
+    path(
+        "metrics",
+        feedback_view.metrics_list,
+        name="list_metrics"
+    )
 ]

@@ -56,3 +56,13 @@ class FeedbackView:
                 "msg": msg,
             },
         )
+
+    def metrics_list(self, request):
+        evaluation_metrics = EvaluationMetric.objects.all()
+        return render(
+            request=request,
+            template_name="admin/metrics-list.html",
+            context={
+                "metrics": evaluation_metrics,
+            }
+        )

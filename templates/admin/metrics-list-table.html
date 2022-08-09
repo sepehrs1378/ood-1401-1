@@ -1,0 +1,26 @@
+<table class="table table-hover">
+    <thead class="list-header">
+    <tr>
+        <th class="list-header-column" scope="col">عملیات</th>
+        <th class="list-header-column" scope="col">سوال</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for metric in metrics %}
+        <tr class="list-entry">
+            <td>
+                <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
+                    ...
+                </button>
+                <div class="dropdown-menu complete-rtl">
+                    <a class="dropdown-item">ویرایش</a>
+                    <a class="dropdown-item">حذف</a>
+                </div>
+            </td>
+
+            <td>{{ metric.question }}</td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
