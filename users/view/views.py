@@ -60,18 +60,15 @@ class UserView:
     def home_page(self, request):
         user_type = None
         service_requests = None
-        users = None
         if request.user and request.user.is_authenticated:
             user_type = request.user.get_user_type_str()
             service_requests = self.controller.get_service_requests_list(request.user)
-            users = self.controller.get_all_users()
         return render(
             request=request,
             template_name="index.html",
             context={
                 "user_type": user_type,
                 "service_requests": service_requests,
-                "users": users,
             }
             if user_type
             else {},
@@ -132,3 +129,13 @@ class UserView:
             )
 
         return profile_view
+
+    def list_users(self, request):
+        users = self.controller.get_all_users()
+        return render(
+            request=request,
+            template_name="admin/users-list.html",
+            context={
+                "users": users,
+            }
+        )

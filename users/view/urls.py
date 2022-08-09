@@ -24,6 +24,7 @@ urlpatterns = [
     ),
     path("login", user_view.login_request, name="login"),
     path("", user_view.home_page, name="home"),
+    path("list", user_view.list_users, name="users_list"),
     path("profile/customer", user_view.profile(Customer), name="profile"),
     path("profile/expert", user_view.profile(Expert), name="profile")
 ]
