@@ -171,3 +171,7 @@ class ServiceController:
 
     def get_categories(self):
         return ServiceCategory.objects.all()
+
+    def get_service(self, service_id):
+        return Service.objects.get(id=service_id)
+

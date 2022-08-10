@@ -6,7 +6,7 @@ from users.models.customer import Customer
 from users.models.expert import Expert
 
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
-from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm
+from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm
 from services.controller.controller import ServiceController
 
 
@@ -194,3 +194,21 @@ class ServiceView:
         return render(request=request, template_name="admin/category-list.html", context={
             "categories": categories,
         })
+
+    def service(self, request, service_id):
+        msg = ""
+        service = self.controller.get_service(service_id)
+        if request.method == "POST":
+            form = ServiceForm(request.POST, instance=service)
+            form.save()
+            return redirect("/services/list")
+        elif request.method == "delete":
+            service.delete()
+            return redirect("/services/list")
+        else:
+            form = ServiceForm(instance=service)
+            return render(
+                request=request,
+                template_name="admin/service.html",
+                context={"form": form, "msg": msg},
+            )

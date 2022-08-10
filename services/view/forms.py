@@ -127,3 +127,26 @@ class ServiceRequestFromSystemForm(forms.Form):
 
         service_request.save()
         return service_request
+
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Service
+        fields = ['name', 'description', 'category']
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__( *args, **kwargs)
+        self.fields["name"].label = "نام"
+        self.fields["description"].label = "توضیحات"
+        self.fields["category"].label = "دسته بندی"
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div("name", css_class="col"),
+            Div("description", css_class="col"),
+            Div("category", css_class="col"),
+            Submit(
+                "ُSave",
+                "ذخیره",
+                css_class="btn btn-dark py-2 mt-2",
+                style="width: 10%",
+            ))
