@@ -175,3 +175,5 @@ class ServiceController:
     def get_service(self, service_id):
         return Service.objects.get(id=service_id)
 
+    def get_category(self, category_id):
+        return ServiceCategory.objects.get(id=category_id)

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from feedback.view.forms import FeedbackForm, MetricForm
 from feedback.models.evaluation_metric import EvaluationMetric
-
+from django.contrib import messages
 
 class FeedbackView:
     def send_feedback(self, request, request_id):
@@ -72,15 +72,19 @@ class FeedbackView:
         metric = EvaluationMetric.objects.get(id=metric_id)
         if request.method == "POST":
             form = MetricForm(request.POST,instance=metric)
-            form.save()
-            return redirect("/feedback/metrics")
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Metric successful.")
+                return redirect("/feedback/metrics")
+            messages.error(request, "Unsuccessful Edit Metric Invalid information.")
+            msg = form.errors
         elif request.method == "delete":
             metric.delete()
             return redirect("/feedback/metrics")
         else:
             form = MetricForm(instance=metric)
-            return render(
-                request=request,
-                template_name="admin/metric.html",
-                context={"form": form, "msg": msg},
-            )
+        return render(
+            request=request,
+            template_name="admin/metric.html",
+            context={"form": form, "msg": msg},
+        )

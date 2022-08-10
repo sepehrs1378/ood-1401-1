@@ -3,7 +3,7 @@ from django import forms
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Div
-from services.models.service import Service
+from services.models.service import Service, ServiceCategory
 from services.view.exceptions import RepeatedRequestException
 
 
@@ -144,6 +144,30 @@ class ServiceForm(forms.ModelForm):
             Div("name", css_class="col"),
             Div("description", css_class="col"),
             Div("category", css_class="col"),
+            Submit(
+                "ُSave",
+                "ذخیره",
+                css_class="btn btn-dark py-2 mt-2",
+                style="width: 10%",
+            ))
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = ServiceCategory
+        fields = ['name', 'description', 'parent']
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__( *args, **kwargs)
+        self.fields["name"].label = "نام"
+        self.fields["description"].label = "توضیحات"
+        self.fields["parent"].label = "دسته بندی مادر"
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div("name", css_class="col"),
+            Div("description", css_class="col"),
+            Div("parent", css_class="col"),
             Submit(
                 "ُSave",
                 "ذخیره",
