@@ -26,7 +26,7 @@ class Channel(models.Model):
         if your_user.id == self.customer.id:
             return self.expert.username
         elif your_user.id == self.expert.id:
-            return self.customer.id
+            return self.customer.username
         else:
             return False
 
