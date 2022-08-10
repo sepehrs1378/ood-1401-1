@@ -8,11 +8,11 @@
 
 #container {
 	width: 750px;
-	height: 800px;
+	height: 600px;
 	background: #eff3f7;
 	margin: 0 auto;
 	font-size: 0;
-	border-radius: 5px;
+	border-radius: 15px;
 	overflow: hidden;
 }
 
@@ -28,7 +28,7 @@ aside {
 
 main {
 	width: 490px;
-	height: 800px;
+	height: 440px;
 	display: inline-block;
 	font-size: 15px;
 	vertical-align: top;
@@ -61,7 +61,7 @@ aside ul {
 	padding-left: 0;
 	margin: 0;
 	list-style-type: none;
-	overflow-y: scroll;
+	/* overflow-y: scroll; */
 	height: 690px;
 }
 
@@ -126,6 +126,7 @@ aside li h3 {
 }
 
 main header {
+	background-color: #dce2e7;
 	height: 110px;
 	padding: 30px 20px 30px 40px;
 }
@@ -165,7 +166,7 @@ main header h3 {
 	margin: 0;
 	list-style-type: none;
 	overflow-y: scroll;
-	height: 535px;
+	height: 350px;
 	border-top: 2px solid #fff;
 	border-bottom: 2px solid #fff;
 }
