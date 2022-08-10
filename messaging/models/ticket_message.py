@@ -13,10 +13,10 @@ class TicketMessage(models.Model):
     """
 
     ticket = models.ForeignKey(
-        TicketChannel, on_delete=models.CASCADE, blank=False, null=False
+        TicketChannel, on_delete=models.CASCADE, blank=True, null=True
     )
     text = models.TextField()
-    sender = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     time = models.DateField(default=now)
 
     def __str__(self) -> str:
