@@ -27,6 +27,9 @@ class UserController:
     def get_user_info(self, user: User):
         return User.objects.get(username=user.username)
 
+    def get_user(self, user_id: int):
+        return User.objects.get(id= user_id)
+
     def check_username_is_repetitive(myPk, myUsername):
         return User.objects.filter(~Q(pk=myPk) & Q(username=myUsername)).exists()
 

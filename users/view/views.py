@@ -5,6 +5,7 @@ from users.controller.controller import UserController
 from users.models.customer import Customer
 from users.models.expert import Expert
 from users.models.role import Role
+
 from users.view.forms import *
 from django.contrib.auth import login
 from django.contrib import messages
@@ -104,31 +105,39 @@ class UserView:
         self.controller.change_expert_status(request.user)
         return redirect("/users")
 
+    def render_profile_form(self, request, user: Type[User], role_type: Type[Role]):
+        msg = ""
+        if request.method == "POST":
+            form = self.edit_forms.get(role_type)(user, request.POST, request.FILES)
+            if form.is_valid():
+                form.save(user)
+                messages.success(request, "Edit Profile successful.")
+                return redirect(request.path_info)
+            messages.error(request, "Unsuccessful Edit Profile Invalid information.")
+            msg = form.errors
+        else:
+            form = self.edit_forms.get(role_type)(user)
+        return render(
+            request=request,
+            template_name="users/profile.html",
+            context={
+                "profile_form": form,
+                "msg": msg,
+                "user_type": request.user.get_user_type_str(),
+                "profile_type": role_type.__name__
+            },
+        )
+
     def profile(self, role_type: Type[Role]):
         def profile_view(request):
             user = self.controller.get_user_info(request.user)
-            msg = ""
-            if request.method == "POST":
-                form = self.edit_forms.get(role_type)(user, request.POST, request.FILES)
-                if form.is_valid():
-                    form.save(user)
-                    messages.success(request, "Edit Profile successful.")
-                    return redirect(request.path_info)
-                messages.error(request, "Unsuccessful Edit Profile Invalid information.")
-                msg = form.errors
-            else:
-                form = self.edit_forms.get(role_type)(user)
-            return render(
-                request=request,
-                template_name="users/profile.html",
-                context={
-                    "profile_form": form,
-                    "msg": msg,
-                    "user_type": role_type.__name__,
-                },
-            )
-
+            return self.render_profile_form(request, user, role_type)
         return profile_view
+
+    def edit_profile(self, request, user_id):
+        user = self.controller.get_user(user_id)
+        role_type = user.role.__class__
+        return self.render_profile_form(request, user, role_type)
 
     def list_users(self, request):
         users = self.controller.get_all_users()

@@ -4,4 +4,6 @@
     {% include 'users/expert/sidebar.html' %}
 {% elif user_type == "it_manager" %}
     {% include 'users/it_manager/sidebar.html' %}
+{% else %}
+    {% include 'users/customer/sidebar.html' %}
 {% endif %}
