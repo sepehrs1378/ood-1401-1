@@ -14,3 +14,6 @@ class ITManager(Role):
     class Meta:
         verbose_name = "ITManager"
         verbose_name_plural = "ITManagers"
+
+    def __str__(self):
+        return "مدیر فنی"

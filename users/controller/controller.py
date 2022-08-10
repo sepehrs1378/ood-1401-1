@@ -2,6 +2,7 @@ from django.db.models import Q
 from users.models.user import User
 from users.models.expert import Expert
 from users.models.customer import Customer
+from users.models.it_manager import ITManager
 from services.models.service_request import ServiceRequest
 
 
@@ -13,6 +14,8 @@ class UserController:
             return ServiceRequest.objects.filter(
                 Q(expert=user) | Q(expert=None, service=user.role.expertise)
             )
+        elif isinstance(user.role, ITManager):
+            return ServiceRequest.objects.all()
         return []
 
     def change_expert_status(self, user: User):
@@ -24,8 +27,14 @@ class UserController:
     def get_user_info(self, user: User):
         return User.objects.get(username=user.username)
 
+    def get_user(self, user_id: int):
+        return User.objects.get(id= user_id)
+
     def check_username_is_repetitive(myPk, myUsername):
         return User.objects.filter(~Q(pk=myPk) & Q(username=myUsername)).exists()
 
     def check_email_is_repetitive(myPk, myEmail):
         return User.objects.filter(~Q(pk=myPk) & Q(email=myEmail)).exists()
+
+    def get_all_users(self):
+        return User.objects.all()

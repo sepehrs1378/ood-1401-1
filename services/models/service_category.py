@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -19,3 +20,8 @@ class ServiceCategory(models.Model):
     class Meta:
         verbose_name = "ServiceCategory"
         verbose_name_plural = "ServiceCategories"
+
+    def clean(self, *args, **kwargs):
+        if self.parent and self.parent.id == self.id:
+            raise ValidationError('دسته بندی مادر نمی‌تواند خودش باشد!')
+        return super(ServiceCategory, self).clean(*args, **kwargs)

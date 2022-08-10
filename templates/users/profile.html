@@ -2,24 +2,33 @@
 
 {% block content %}
 <div class="main-box">
-    {% if user_type == "Customer" %}
+    {% if user_type == "customer" %}
     <!-- Navigation -->
     <div class="navigation complete-rtl">
         خانه / صفحه مشتری / پروفایل
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'users/customer/sidebar.html' %}   
+        {% include 'users/customer/sidebar.html' %}
         {% include "users/profile-form.html" %}
     </div>
-    {% else %}
+    {% elif user_type == "expert" %}
     <!-- Navigation -->
     <div class="navigation complete-rtl">
         خانه / صفحه متخصص / پروفایل
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'users/expert/sidebar.html' %}    
+        {% include 'users/expert/sidebar.html' %}
         {% include "users/profile-form.html" %}
     </div>
+    {% elif user_type == "it_manager" %}
+        <!-- Navigation -->
+        <div class="navigation complete-rtl">
+            خانه / صفحه مدیر فنی / پروفایل
+        </div>
+        <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+            {% include 'users/it_manager/sidebar.html' %}
+            {% include "users/profile-form.html" %}
+        </div>
     {% endif %}
 </div>
 

@@ -1,0 +1,9 @@
+{% if user_type == "customer" %}
+    {% include 'users/customer/sidebar.html' %}
+{% elif user_type == "expert" %}
+    {% include 'users/expert/sidebar.html' %}
+{% elif user_type == "it_manager" %}
+    {% include 'users/it_manager/sidebar.html' %}
+{% else %}
+    {% include 'users/customer/sidebar.html' %}
+{% endif %}

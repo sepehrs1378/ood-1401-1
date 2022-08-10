@@ -8,7 +8,6 @@ from feedback.models.evaluation_metric import EvaluationMetric
 from feedback.models.feedback import Feedback
 from services.models.service_request import RequestStatus, ServiceRequest
 
-
 RATE_CHOICES = [
     ("0", 0),
     ("1", 1),
@@ -100,3 +99,23 @@ class FeedbackForm(forms.Form):
             self.fields[field].disabled = True
 
         self.helper.layout.fields = self.helper.layout.fields[:-1]
+
+
+class MetricForm(forms.ModelForm):
+    class Meta:
+        model = EvaluationMetric
+        fields = ['question']
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__( *args, **kwargs)
+        self.fields["question"].label = "سوال"
+
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div("question", css_class="col"),
+            Submit(
+                "ُSave",
+                "ذخیره",
+                css_class="btn btn-dark py-2 mt-2",
+                style="width: 10%",
+            ))

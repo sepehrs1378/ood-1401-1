@@ -168,3 +168,12 @@ class ServiceController:
         )
         starting_msg_text = "این کانال برای گفت‌و‌گوی مشتری و متخصص به وجود آمده است"
         Message.objects.create(channel=channel, sender=customer, text=starting_msg_text)
+
+    def get_categories(self):
+        return ServiceCategory.objects.all()
+
+    def get_service(self, service_id):
+        return Service.objects.get(id=service_id)
+
+    def get_category(self, category_id):
+        return ServiceCategory.objects.get(id=category_id)

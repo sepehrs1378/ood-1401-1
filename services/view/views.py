@@ -4,9 +4,9 @@ from feedback.models.feedback import Feedback
 from services.view.exceptions import RepeatedRequestException
 from users.models.customer import Customer
 from users.models.expert import Expert
-
+from django.contrib import messages
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
-from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm
+from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm, CategoryForm
 from services.controller.controller import ServiceController
 
 
@@ -184,6 +184,57 @@ class ServiceView:
             request=request,
             template_name="services/service-list.html",
             context={
+                "user_type": request.user.get_user_type_str(),
                 "all_services_tree": self.controller.get_service_category_trees(query)
             },
+        )
+
+    def categories_list(self, request):
+        categories = self.controller.get_categories()
+        return render(request=request, template_name="admin/category-list.html", context={
+            "categories": categories,
+        })
+
+    def service(self, request, service_id):
+        msg = ""
+        service = self.controller.get_service(service_id)
+        if request.method == "POST":
+            form = ServiceForm(request.POST, instance=service)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Service successful.")
+                return redirect("/services/list")
+            messages.error(request, "Unsuccessful Edit Service Invalid information.")
+            msg = form.errors
+        elif request.method == "delete":
+            service.delete()
+            return redirect("/services/list")
+        else:
+            form = ServiceForm(instance=service)
+        return render(
+            request=request,
+            template_name="admin/service.html",
+            context={"form": form, "msg": msg},
+        )
+
+    def category(self, request, category_id):
+        msg = ""
+        category = self.controller.get_category(category_id)
+        if request.method == "POST":
+            form = CategoryForm(request.POST, instance=category)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Category successful.")
+                return redirect('/services/categories')
+            messages.error(request, "Unsuccessful Edit Category Invalid information.")
+            msg = form.errors
+        elif request.method == "delete":
+            category.delete()
+            return redirect("categories")
+        else:
+            form = CategoryForm(instance=category)
+        return render(
+            request=request,
+            template_name="admin/category.html",
+            context={"form": form, "msg": msg},
         )

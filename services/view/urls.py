@@ -47,8 +47,23 @@ urlpatterns = [
         name="services_list",
     ),
     path(
+        "<int:service_id>",
+        service_view.service,
+        name="service_update"
+    ),
+    path(
         "request/finding",
         service_view.finding_expert,
         name="finding_expert",
+    ),
+    path(
+        "categories",
+        service_view.categories_list,
+        name="categories_list"
+    ),
+    path(
+        "category/<int:category_id>",
+         service_view.category,
+         name="category_update"
     ),
 ]

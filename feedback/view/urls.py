@@ -15,4 +15,12 @@ urlpatterns = [
         feedback_view.get_feedback,
         name="feedback_get",
     ),
+    path(
+        "metrics",
+        feedback_view.metrics_list,
+        name="list_metrics"
+    ),
+    path("metric/<int:metric_id>",
+         feedback_view.metric,
+         name="metric_update")
 ]

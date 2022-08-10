@@ -1,0 +1,43 @@
+<table class="table table-hover">
+    <thead class="list-header">
+        <tr>
+            <th class="list-header-column" scope="col">عملیات</th>
+            <th class="list-header-column" scope="col">آخرین ورود</th>
+            <th class="list-header-column" scope="col">نوع کاربر</th>
+            <th class="list-header-column" scope="col">نام کاربر</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr class="list-entry">
+            <td>
+                <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
+                    ...
+                </button>
+                <div class="dropdown-menu complete-rtl">
+                    <a class="dropdown-item" href="profile/{{ user.id }}">ویرایش</a>
+                    <a class="dropdown-item">حذف</a>
+                    {% if user.get_user_type_str == "expert" %}
+                        <a class="dropdown-item" >تایید مدارک</a>
+                    {% endif %}
+                </div>
+            </td>
+
+            <td id="date-item-{{ user.username }}">
+                <!-- {{ user.last_login|date:"Y M d" }} -->
+            </td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.name }}</td>
+
+            <script>
+                var element = document.getElementById("date-item-{{ user.username }}");
+                element.innerText = new Intl.DateTimeFormat('fa-IR', {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                }).format(new Date("{{ user.last_login|date:'Y M d' }}"));
+            </script>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

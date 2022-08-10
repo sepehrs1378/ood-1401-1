@@ -9,3 +9,6 @@ class Manager(Role):
     class Meta:
         verbose_name = "Manager"
         verbose_name_plural = "Managers"
+
+    def __str__(self):
+        return "مدیر"
