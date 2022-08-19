@@ -57,7 +57,7 @@ class MessagingController:
         channels = query.all()
 
         for channel in channels:
-            channel.contact_name = channel.get_contact_name(user)
+            channel.contact_name = channel.get_contact(user).username
             channel.header = channel.contact_name
 
         return channels
@@ -67,9 +67,11 @@ class MessagingController:
         if channel is None:
             return False
 
-        Message.objects.filter(channel__id=channel_id, sender__id=user.id).update(
+        contact = channel.get_contact(user)
+        Message.objects.filter(channel__id=channel_id, sender__id=contact.id).update(
             is_seen=True
         )
+
         messages = Message.objects.filter(channel__id=channel_id).all()
         for msg in messages:
             msg.is_sent_by_me = msg.sender_id == user.id
