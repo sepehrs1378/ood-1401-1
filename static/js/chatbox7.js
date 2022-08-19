@@ -17,12 +17,13 @@ async function update_chatbox() {
                     msg = messages[i];
                     msg_html = `<li class="${msg["is_sent_by_me"] ? "me" : "you"}">
 				                    <div class="entete">
-					                    <h3>${msg["time"]}</h3>
-				                    </div>
+					                    <h3 style="color: black;">${msg["time"]}</h3>
+                                        ${msg["is_seen"] && !msg["is_sent_by_me"] ? '<h3 style="color: black;">&#10004</h3>' : ''}
+                                    </div>
 				                    <div class="message">
                                         ${msg["text"]}
                                     </div>
-			                    </li>`
+                                </li>`
                     chatbox.innerHTML += msg_html;
                 }
             }

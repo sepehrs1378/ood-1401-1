@@ -67,6 +67,9 @@ class MessagingController:
         if channel is None:
             return False
 
+        Message.objects.filter(channel__id=channel_id, sender__id=user.id).update(
+            is_seen=True
+        )
         messages = Message.objects.filter(channel__id=channel_id).all()
         for msg in messages:
             msg.is_sent_by_me = msg.sender_id == user.id
