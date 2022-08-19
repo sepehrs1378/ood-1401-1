@@ -68,9 +68,9 @@ class MessagingController:
             return False
 
         contact = channel.get_contact(user)
-        Message.objects.filter(channel__id=channel_id, sender__id=contact.id).update(
-            is_seen=True
-        )
+        Message.objects.filter(
+            channel__id=channel_id, is_seen=False, sender__id=contact.id
+        ).update(is_seen=True)
 
         messages = Message.objects.filter(channel__id=channel_id).all()
         for msg in messages:
