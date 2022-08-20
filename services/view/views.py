@@ -275,6 +275,24 @@ class ServiceView:
             },
         )
 
+    def service(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = ServiceForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Service Added successful.")
+                return redirect("/services/list")
+            messages.error(request, "Unsuccessful Edit Service Invalid information.")
+            msg = form.errors
+        else:
+            form = ServiceForm()
+        return render(
+            request=request,
+            template_name="admin/service.html",
+            context={"form": form, "msg": msg},
+        )
+
     def category(self, request, category_id):
         from home_service.dependency_injection import dependency_injector
 

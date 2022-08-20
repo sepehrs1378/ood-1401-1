@@ -2,7 +2,7 @@
 
 {% block content %}
 
-{% load crispy_forms_tags %}
+    {% load crispy_forms_tags %}
 
 <div class="main-box">
     <!-- Navigation -->
@@ -12,20 +12,20 @@
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
         {% include 'includes/sidebar.html' with avatar=user.avatar %}
 
-        {% load crispy_forms_tags %}
+            {% load crispy_forms_tags %}
 
-        <!--Register-->
-        <div class="container w-50 form-container mt-0">
-            <div class="form-header">
-                <h3>لیست خدمات سامانه</h3>
-            </div>
-            <div class="form-body form-link complete-rtl">
-                <div class="my-3">
-                    <h3>لیست همه‌ی خدمات</h3>
-                    <p class="sub-color">
-                        خدمات در این سامانه به دسته‌هایی تقسیم می شوند که در پایین مشاهده می کنید.
-                    </p>
+            <!--Register-->
+            <div class="container w-50 form-container mt-0">
+                <div class="form-header">
+                    <h3>لیست خدمات سامانه</h3>
                 </div>
+                <div class="form-body form-link complete-rtl">
+                    <div class="my-3">
+                        <h3>لیست همه‌ی خدمات</h3>
+                        <p class="sub-color">
+                            خدمات در این سامانه به دسته‌هایی تقسیم می شوند که در پایین مشاهده می کنید.
+                        </p>
+                    </div>
 
                 <div class="w-100 d-flex search-container my-4">
                     <div class="input-group search-inner">
@@ -37,32 +37,40 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    {% include 'services/service-card.html' %}
-                    {% include 'services/tree-view.html' %}
+                    <div class="d-flex justify-content-between">
+                        {% include 'services/service-card.html' %}
+                        {% include 'services/tree-view.html' %}
+                    </div>
+                    {% if user_type == "it_manager" %}
+                        <a type="button" class="btn btn-pink" href="/services" >
+                            <span class="material-symbols-outlined">
+                                add
+                            </span>
+                            <span>ایجاد سرویس</span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    function getServices(query) {
-        if (query != null && query.length > 0)
-            window.location = "/services/list?q=" + query;
-        else
-            window.location = "/services/list";
-    }
-
-    document.getElementById("search_field").addEventListener("keypress", function (event) {
-        // If the user presses the "Enter" key on the keyboard
-        if (event.key === "Enter") {
-            // Cancel the default action, if needed
-            event.preventDefault();
-            // Trigger the button element with a click
-            getServices($('#search_field').val());
+    <script>
+        function getServices(query) {
+            if (query != null && query.length > 0)
+                window.location = "/services/list?q=" + query;
+            else
+                window.location = "/services/list";
         }
-    }); 
-</script>
+
+        document.getElementById("search_field").addEventListener("keypress", function (event) {
+            // If the user presses the "Enter" key on the keyboard
+            if (event.key === "Enter") {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                getServices($('#search_field').val());
+            }
+        });
+    </script>
 
 {% endblock %}

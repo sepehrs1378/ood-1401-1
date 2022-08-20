@@ -48,6 +48,11 @@ urlpatterns = [
     ),
     path("<int:service_id>", service_view.service, name="service_update"),
     path(
+        "",
+        service_view.service,
+        name="service_create"
+    ),
+    path(
         "request/finding",
         service_view.finding_expert,
         name="finding_expert",
