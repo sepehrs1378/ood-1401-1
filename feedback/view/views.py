@@ -6,6 +6,7 @@ from django.contrib import messages
 
 class FeedbackView:
     def send_feedback(self, request, request_id):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         evaluation_metrics = EvaluationMetric.objects.all()
         if request.method == "POST":
@@ -34,10 +35,12 @@ class FeedbackView:
                 "is_expert": False,
                 "form": form,
                 "msg": msg,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
     def get_feedback(self, request, request_id):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         evaluation_metrics = EvaluationMetric.objects.all()
         form = FeedbackForm(
@@ -54,20 +57,24 @@ class FeedbackView:
                 "is_expert": True,
                 "form": form,
                 "msg": msg,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
     def metrics_list(self, request):
+        from home_service.dependency_injection import dependency_injector
         evaluation_metrics = EvaluationMetric.objects.all()
         return render(
             request=request,
             template_name="admin/metrics-list.html",
             context={
                 "metrics": evaluation_metrics,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             }
         )
 
     def metric(self, request, metric_id:int):
+        from home_service.dependency_injection import dependency_injector
         msg=""
         metric = EvaluationMetric.objects.get(id=metric_id)
         if request.method == "POST":
@@ -86,5 +93,5 @@ class FeedbackView:
         return render(
             request=request,
             template_name="admin/metric.html",
-            context={"form": form, "msg": msg},
+            context={"form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )

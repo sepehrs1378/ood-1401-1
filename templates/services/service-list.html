@@ -10,7 +10,7 @@
         خانه / لیست خدمات
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'includes/sidebar.html' %}
+        {% include 'includes/sidebar.html' with avatar=user.avatar %}
 
         {% load crispy_forms_tags %}
 

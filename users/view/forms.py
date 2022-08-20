@@ -413,6 +413,7 @@ class ExpertEditProfileForm(UserUpdateForm):
         expert.phone_number = self.cleaned_data["phone_number"]
         expert.role.expertise = self.cleaned_data["expertise"]
         expert.role.document = self.cleaned_data["document"]
+        expert.avatar = self.cleaned_data["avatar"]
         expert.role.save()
         expert.save()
 
@@ -428,6 +429,7 @@ class ExpertEditProfileForm(UserUpdateForm):
         self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور جدید"
         self.fields["expertise"].initial = expert.role.expertise
         self.fields["document"].initial = expert.role.document
+        self.fields["avatar"].initial = expert.avatar
 
         self.fields["username"].label = ""
         self.fields["name"].label = ""
@@ -437,6 +439,7 @@ class ExpertEditProfileForm(UserUpdateForm):
         self.fields["password2"].label = ""
         self.fields["expertise"].label = "انتخاب تخصص"
         self.fields["document"].label = "آپلود مدارک"
+        self.fields["avatar"].label = ""
         self.fields["username"].help_text = None
         self.fields["name"].help_text = None
         self.fields["email"].help_text = None
@@ -445,6 +448,7 @@ class ExpertEditProfileForm(UserUpdateForm):
         self.fields["password2"].help_text = None
         self.fields["expertise"].help_text = None
         self.fields["document"].help_text = None
+        self.fields["avatar"].help_text = "آواتار خود را انتخاب کنید."
         self.fields["username"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
@@ -467,9 +471,16 @@ class ExpertEditProfileForm(UserUpdateForm):
         self.fields["document"].widget.attrs[
             "style"
         ] = "text-align: left; direction: ltr;"
+        self.fields["avatar"].widget.attrs[
+            "style"
+        ] = "text-align: left; direction: ltr;"
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Div("avatar", css_class="col"),
+                    css_class="row",
+                ),
                 Div(
                     Div("username", css_class="col"),
                     Div("name", css_class="col"),

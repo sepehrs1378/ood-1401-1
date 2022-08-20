@@ -70,6 +70,7 @@ class UserView:
             context={
                 "user_type": user_type,
                 "service_requests": service_requests,
+                "object_name": self.controller.get_user_info(request.user)
             }
             if user_type
             else {},
@@ -117,6 +118,7 @@ class UserView:
             msg = form.errors
         else:
             form = self.edit_forms.get(role_type)(user)
+        print(user.avatar)
         return render(
             request=request,
             template_name="users/profile.html",

@@ -9,13 +9,13 @@ from services.models.service_request import RequestStatus, RequestType, ServiceR
 from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm, CategoryForm
 from services.controller.controller import ServiceController
 
-
 class ServiceView:
     def __init__(self, controller: ServiceController):
         self.controller = controller
 
     # Expert is chosen by customer
     def request_service_from_expert(self, request, role_id: int):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         expert = self.controller.get_expert_by_role_id(role_id)
         if request.method == "POST":
@@ -47,11 +47,13 @@ class ServiceView:
                 "msg": msg,
                 "request_type": RequestType.CUSTOMER_SELECTED,
                 "expert": expert,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
     # Expert is chosen by system
     def request_service_from_system(self, request):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         if request.method == "POST":
             form = ServiceRequestFromSystemForm(request.POST)
@@ -79,10 +81,12 @@ class ServiceView:
                 "msg": msg,
                 "request_type": RequestType.SYSTEM_SELECTED,
                 "all_services_tree": self.controller.get_service_category_trees(),
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
     def finding_expert(self, request):
+        from home_service.dependency_injection import dependency_injector
         request_id = request.GET["request_id"]
         service_request = None
         try:
@@ -93,7 +97,7 @@ class ServiceView:
         return render(
             request=request,
             template_name="services/finding-expert.html",
-            context={"service_request": service_request},
+            context={"service_request": service_request, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )
 
     def approve_request(self, request, request_id):
@@ -162,6 +166,7 @@ class ServiceView:
             return redirect("/users")
 
     def experts_list(self, request):
+        from home_service.dependency_injection import dependency_injector
         query = request.GET.get("q")
         user_type = request.user.get_user_type_str()
         # filter based on user.role type
@@ -175,27 +180,33 @@ class ServiceView:
             context={
                 "experts": experts,
                 "user_type": user_type,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
     def services_list(self, request):
+        from home_service.dependency_injection import dependency_injector
         query = request.GET.get("q")
         return render(
             request=request,
             template_name="services/service-list.html",
             context={
                 "user_type": request.user.get_user_type_str(),
-                "all_services_tree": self.controller.get_service_category_trees(query)
+                "all_services_tree": self.controller.get_service_category_trees(query),
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
     def categories_list(self, request):
+        from home_service.dependency_injection import dependency_injector
         categories = self.controller.get_categories()
         return render(request=request, template_name="admin/category-list.html", context={
             "categories": categories,
+            "object_name": dependency_injector.user_controller.get_user_info(request.user)
         })
 
     def service(self, request, service_id):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         service = self.controller.get_service(service_id)
         if request.method == "POST":
@@ -214,10 +225,11 @@ class ServiceView:
         return render(
             request=request,
             template_name="admin/service.html",
-            context={"form": form, "msg": msg},
+            context={"form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )
 
     def category(self, request, category_id):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         category = self.controller.get_category(category_id)
         if request.method == "POST":
@@ -236,5 +248,5 @@ class ServiceView:
         return render(
             request=request,
             template_name="admin/category.html",
-            context={"form": form, "msg": msg},
+            context={"form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )

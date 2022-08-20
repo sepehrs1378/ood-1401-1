@@ -10,7 +10,7 @@
         خانه / صفحه مشتری / درخواست جدید
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'users/customer/sidebar.html' %}
+        {% include 'users/customer/sidebar.html' with avatar=user.avatar %}
         {% include 'services/service-request-form.html' %}
     </div>
 </div>

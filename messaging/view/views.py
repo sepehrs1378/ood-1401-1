@@ -7,12 +7,12 @@ import json
 from messaging.view.forms import TicketForm
 from messaging.controller.controller import MessagingController
 
-
 class MessagingView:
     def __init__(self, controller: MessagingController) -> None:
         self.controller = controller
 
     def create_ticket(self, request):
+        from home_service.dependency_injection import dependency_injector
         msg = ""
         if request.method == "POST":
             form = TicketForm(request.POST)
@@ -30,10 +30,11 @@ class MessagingView:
         return render(
             request=request,
             template_name="messaging/create_ticket.html",
-            context={"request_form": form, "msg": msg},
+            context={"request_form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )
 
     def show_all_tickets(self, request):
+        from home_service.dependency_injection import dependency_injector
         ticket_channels = self.controller.get_ticket_channels(request.user)
         user_type = request.user.get_user_type_str()
 
@@ -44,6 +45,7 @@ class MessagingView:
                 "channels": ticket_channels,
                 "user_type": user_type,
                 "is_for_chat": False,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)
             },
         )
 
@@ -90,11 +92,12 @@ class MessagingView:
         return HttpResponse(json.dumps(messages))
 
     def get_chatroom(self, request):
+        from home_service.dependency_injection import dependency_injector
         channels = self.controller.get_channels(request.user)
         user_type = request.user.get_user_type_str()
 
         return render(
             request=request,
             template_name="messaging/chatroom.html",
-            context={"channels": channels, "user_type": user_type, "is_for_chat": True},
+            context={"channels": channels, "user_type": user_type, "is_for_chat": True, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )

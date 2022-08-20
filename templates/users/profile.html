@@ -17,7 +17,7 @@
         خانه / صفحه متخصص / پروفایل
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'users/expert/sidebar.html' %}
+        {% include 'users/expert/sidebar.html' with avatar=user.avatar %}
         {% include "users/profile-form.html" %}
     </div>
     {% elif user_type == "it_manager" %}
@@ -26,7 +26,7 @@
             خانه / صفحه مدیر فنی / پروفایل
         </div>
         <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-            {% include 'users/it_manager/sidebar.html' %}
+            {% include 'users/it_manager/sidebar.html' with avatar=user.avatar %}
             {% include "users/profile-form.html" %}
         </div>
     {% endif %}
