@@ -49,7 +49,7 @@ urlpatterns = [
     path("<int:service_id>", service_view.service, name="service_update"),
     path(
         "",
-        service_view.service,
+        service_view.create_service,
         name="service_create"
     ),
     path(
@@ -71,5 +71,10 @@ urlpatterns = [
         "limitations",
         service_view.limitations_list,
         name="limitations_list",
+    ),
+    path(
+        "category",
+        service_view.create_category,
+        name="category_create"
     ),
 ]

@@ -95,3 +95,21 @@ class FeedbackView:
             template_name="admin/metric.html",
             context={"form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )
+
+    def create_metric(self, request):
+        msg=""
+        if request.method == "POST":
+            form = MetricForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Metric Created Successfully")
+                return redirect("/feedback/metrics")
+            messages.error(request, "Unsuccessful Edit Metric Invalid information.")
+            msg = form.errors
+        else:
+            form = MetricForm()
+        return render(
+            request=request,
+            template_name="admin/metric.html",
+            context={"form": form, "msg": msg},
+        )

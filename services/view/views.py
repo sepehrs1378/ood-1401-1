@@ -275,7 +275,7 @@ class ServiceView:
             },
         )
 
-    def service(self, request):
+    def create_service(self, request):
         msg = ""
         if request.method == "POST":
             form = ServiceForm(request.POST)
@@ -332,4 +332,22 @@ class ServiceView:
             context={
                 "limitations": limitations,
                 "object_name": dependency_injector.user_controller.get_user_info(request.user)},
+        )
+
+    def create_category(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = CategoryForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Category successful.")
+                return redirect('/services/categories')
+            messages.error(request, "Unsuccessful Edit Category Invalid information.")
+            msg = form.errors
+        else:
+            form = CategoryForm()
+        return render(
+            request=request,
+            template_name="admin/category.html",
+            context={"form": form, "msg": msg},
         )

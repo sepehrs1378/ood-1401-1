@@ -42,12 +42,14 @@
                         {% include 'services/tree-view.html' %}
                     </div>
                     {% if user_type == "it_manager" %}
-                        <a type="button" class="btn btn-pink" href="/services" >
-                            <span class="material-symbols-outlined">
-                                add
-                            </span>
+                    <div>
+                        <a type="button" class="btn btn-pink" href="/services">
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
                             <span>ایجاد سرویس</span>
                         </a>
+                    </div>
                     {% endif %}
                 </div>
             </div>
