@@ -256,6 +256,7 @@ class UserUpdateForm(forms.ModelForm):
     name = forms.CharField(required=True)
     password1 = forms.CharField(required=False, widget=forms.PasswordInput)
     password2 = forms.CharField(required=False, widget=forms.PasswordInput)
+    avatar = forms.ImageField(required=False)
 
     class Meta:
         model = User
@@ -264,11 +265,13 @@ class UserUpdateForm(forms.ModelForm):
             "name",
             "email",
             "phone_number",
+            "avatar",
             "password1",
             "password2",)
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+
 
 class CustomerEditProfileForm(UserUpdateForm):
 
@@ -300,6 +303,7 @@ class CustomerEditProfileForm(UserUpdateForm):
         customer.name = self.cleaned_data["name"]
         customer.email = self.cleaned_data["email"]
         customer.phone_number = self.cleaned_data["phone_number"]
+        customer.avatar = self.cleaned_data["avatar"]
         customer.role.address = self.cleaned_data["address"]
         customer.role.save()
         customer.save()
@@ -315,19 +319,22 @@ class CustomerEditProfileForm(UserUpdateForm):
         self.fields["password1"].widget.attrs["placeholder"] = "رمز عبور جدید"
         self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور جدید"
         self.fields["address"].initial = customer.role.address
-
+        self.fields["avatar"].initial = customer.avatar
+            
         self.fields["username"].label = ""
         self.fields["name"].label = ""
         self.fields["email"].label = ""
         self.fields["phone_number"].label = ""
         self.fields["password1"].label = ""
         self.fields["password2"].label = ""
+        self.fields["avatar"].label = ""
         self.fields["username"].help_text = None
         self.fields["name"].help_text = None
         self.fields["email"].help_text = None
         self.fields["phone_number"].help_text = None
         self.fields["password1"].help_text = None
         self.fields["password2"].help_text = None
+        self.fields["avatar"].help_text = "آواتار خود را انتخاب کنید."
         self.fields["username"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
@@ -344,9 +351,16 @@ class CustomerEditProfileForm(UserUpdateForm):
         self.fields["password2"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
+        self.fields["avatar"].widget.attrs[
+            "style"
+        ] = "text-align: left; direction: ltr;"
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Div("avatar", css_class="col"),
+                    css_class="row",
+                ),
                 Div(
                     Div("username", css_class="col"),
                     Div("name", css_class="col"),

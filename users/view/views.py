@@ -124,7 +124,8 @@ class UserView:
                 "profile_form": form,
                 "msg": msg,
                 "user_type": request.user.get_user_type_str(),
-                "profile_type": role_type.__name__
+                "profile_type": role_type.__name__,
+                "object_name": user
             },
         )
 

@@ -16,6 +16,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True, blank=False, null=False)
     phone_number = models.CharField(max_length=11)
     name = models.CharField(max_length=50, blank=False, null=False, default="no name")
+    avatar = models.ImageField(upload_to="images/", blank=True, null=True)
     role = models.ForeignKey(
         Role,
         blank=True,

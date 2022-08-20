@@ -18,6 +18,9 @@ from django.urls import path, re_path
 from django.urls import include
 from django.views.generic import RedirectView
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
@@ -28,3 +31,5 @@ urlpatterns = [
     re_path(r"^auth/", include("django.contrib.auth.urls")),
     path("feedback/", include("feedback.view.urls")),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
