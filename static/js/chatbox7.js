@@ -16,11 +16,12 @@ async function update_chatbox() {
                 for (let i = 0; i < messages.length; i++) {
                     msg = messages[i];
                     msg_html = `<li class="${msg["is_sent_by_me"] ? "me" : "you"}">
-				                    <div class="entete">
-					                    <h3 style="color: black;">${msg["time"]}</h3>
-                                        ${msg["is_seen"] && msg["is_sent_by_me"] ? '<h3 style="color: black;">&#10004</h3>' : ''}
+                                    <div class="entete">
+                                        <h3 style="color: black;">${msg["time"]}</h3>
+                                        ${is_for_chat && msg["is_seen"] && msg["is_sent_by_me"] ? '<h3 style="color: black;">&#10004</h3>' : ''}
                                     </div>
-				                    <div class="message">
+                                    <div class="message">
+                                        ${!is_for_chat && msg["is_sent_by_admin"] ? `<b>${msg["sender_username"]}</b><br>` : ""}
                                         ${msg["text"]}
                                     </div>
                                 </li>`

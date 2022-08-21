@@ -18,7 +18,6 @@ class TicketMessage(models.Model):
     text = models.TextField()
     sender = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     time = models.DateField(default=now)
-    is_seen = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"message: {self.text}"

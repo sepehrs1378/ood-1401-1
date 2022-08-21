@@ -15,12 +15,12 @@ class TicketChannel(models.Model):
     title = models.CharField(max_length=30)
     time_of_creation = models.DateField(default=now)
 
-    # Returns the name of the other person on the channel
-    def get_contact_name(self, your_user: User):
-        if your_user.id == self.creator.id:
-            return "admin"
-        else:
-            return self.creator.username
+    # # Returns the name of the other person on the channel
+    # def get_contact_name(self, your_user: User):
+    #     if your_user.id == self.creator.id:
+    #         return "admin"
+    #     else:
+    #         return self.creator.username
 
     def __str__(self) -> str:
         return f"Title: {self.title} | Creator: {self.creator_id}"

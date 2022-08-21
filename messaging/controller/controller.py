@@ -19,34 +19,30 @@ class MessagingController:
             ticket_channels = TicketChannel.objects.all()
 
         for channel in ticket_channels:
-            channel.contact_name = channel.get_contact_name(user)
+            channel.contact_name = channel.title
             channel.header = channel.title
 
         return ticket_channels
 
     def send_ticket_message(self, user: User, ticket_id: int, msg: str) -> bool:
-        user_type = user.get_user_type_str()
         ticket_channel = TicketChannel.objects.get(pk=ticket_id)
-        if user_type == "customer" or user_type == "expert":
-            TicketMessage.objects.create(ticket=ticket_channel, sender=user, text=msg)
-        else:
-            admin_user = User.objects.get(username="admin")
-            TicketMessage.objects.create(
-                ticket=ticket_channel, sender=admin_user, text=msg
-            )
+        TicketMessage.objects.create(ticket=ticket_channel, sender=user, text=msg)
 
         return True
 
     def get_ticket_messages(self, user: User, ticket_id: int):
         user_type = user.get_user_type_str()
-
+        ticket_channel = TicketChannel.objects.filter(pk=ticket_id).first()
         messages = TicketMessage.objects.filter(ticket_id=ticket_id).all()
         for msg in messages:
             if user_type == "customer" or user_type == "expert":
-                msg.is_sent_by_me = msg.sender_id == user.id
+                msg.is_sent_by_me = msg.sender_id == ticket_channel.creator.id
+                msg.sender_username = msg.sender.username
+                msg.is_sent_by_admin = not msg.is_sent_by_me
             else:
-                # sender = User.objects.get(pk=msg.sender_id)
-                msg.is_sent_by_me = msg.sender.username == "admin"
+                msg.is_sent_by_me = msg.sender.id != ticket_channel.creator.id
+                msg.sender_username = msg.sender.username
+                msg.is_sent_by_admin = msg.is_sent_by_me
 
         return messages
 
