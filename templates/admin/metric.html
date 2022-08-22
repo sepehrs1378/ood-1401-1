@@ -2,17 +2,17 @@
 
 {% block content %}
 
-    {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
-    <div class="main-box">
-        <!-- Navigation -->
-        <div class="navigation complete-rtl">
-            خانه / صفحه مدیر فنی / معیارهای بازخورد
-        </div>
-        <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-            {% include 'users/it_manager/sidebar.html' %}
-            {% include 'feedback/metric-form.html' %}
-        </div>
+<div class="main-box">
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        خانه / صفحه مدیر / معیارهای بازخورد
     </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'users/it_manager/sidebar.html' %}
+        {% include 'feedback/metric-form.html' %}
+    </div>
+</div>
 
 {% endblock %}

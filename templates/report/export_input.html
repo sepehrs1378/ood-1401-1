@@ -1,0 +1,18 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<div class="w-100 d-flex search-container">
+    <div class="input-group search-inner">
+        <!-- <input type="search" id="search_field" class="form-control rounded" placeholder="نوع خروجی"
+            aria-label="Search" aria-describedby="search-addon" /> -->
+        <select id="export_type" name="export_type" class="form-control rounded">
+            <option disabled selected value> نوع فایل را برای دریافت خروجی انتخاب کنید </option>
+            <option value="pdf">فایل PDF</option>
+            <option value="csv">فایل CSV</option>
+        </select>
+        <button type="button" class="btn btn-pink"
+            onclick="get_export($('#export_type').val(), {{ rows }}, {{ field_names }}, '{{ table_id }}')">
+            دریافت خروجی
+        </button>
+    </div>
+</div>

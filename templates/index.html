@@ -29,8 +29,16 @@
         خانه / صفحه مدیر فنی / درخواست های ایجاد شده
     </div>
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'users/it_manager/sidebar.html' %}
+        {% include 'users/it_manager/sidebar.html' with avatar=user.avatar %}
         {% include 'users/it_manager/mainpage.html' %}
+    </div>
+    {% else %}
+    <div class="navigation complete-rtl">
+        خانه / صفحه مدیر شرکت / درخواست های ایجاد شده
+    </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'users/manager/sidebar.html' with avatar=user.avatar %}
+        {% include 'users/manager/mainpage.html' %}
     </div>
     {% endif %}
 </div>

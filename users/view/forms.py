@@ -267,10 +267,16 @@ class UserUpdateForm(forms.ModelForm):
             "phone_number",
             "avatar",
             "password1",
-            "password2",)
+            "password2",
+        )
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, include_password, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        if not include_password:
+            self.fields["password1"].disabled = True
+            self.fields["password2"].disabled = True
+            self.fields["password1"].widget.attrs["hidden"] = ""
+            self.fields["password2"].widget.attrs["hidden"] = ""
 
 
 class CustomerEditProfileForm(UserUpdateForm):
@@ -288,13 +294,17 @@ class CustomerEditProfileForm(UserUpdateForm):
     )
 
     def clean(self):
-        if (self.cleaned_data["password1"] != self.cleaned_data["password2"]):
+        if self.cleaned_data["password1"] != self.cleaned_data["password2"]:
             raise forms.ValidationError("دو رمز عبور واردشده یکسان نمی باشند.")
-        elif (UserController.check_username_is_repetitive(self.customer.pk, self.cleaned_data["username"])):
+        elif UserController.check_username_is_repetitive(
+            self.customer.pk, self.cleaned_data["username"]
+        ):
             raise forms.ValidationError("نام کاربری وارد شده تکرای می باشد.")
-        elif (UserController.check_email_is_repetitive(self.customer.pk, self.cleaned_data["email"])):
+        elif UserController.check_email_is_repetitive(
+            self.customer.pk, self.cleaned_data["email"]
+        ):
             raise forms.ValidationError("ایمیل وارد شده تکرای می باشد.")
-        
+
     class Meta(UserUpdateForm.Meta):
         fields = UserUpdateForm.Meta.fields + ("address",)
 
@@ -311,7 +321,7 @@ class CustomerEditProfileForm(UserUpdateForm):
     def __init__(self, customer, *args, **kwargs) -> None:
         self.customer = customer
         super().__init__(*args, **kwargs)
-        
+
         self.fields["username"].initial = customer.username
         self.fields["name"].initial = customer.name
         self.fields["email"].initial = customer.email
@@ -320,7 +330,7 @@ class CustomerEditProfileForm(UserUpdateForm):
         self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور جدید"
         self.fields["address"].initial = customer.role.address
         self.fields["avatar"].initial = customer.avatar
-            
+
         self.fields["username"].label = ""
         self.fields["name"].label = ""
         self.fields["email"].label = ""
@@ -393,11 +403,15 @@ class ExpertEditProfileForm(UserUpdateForm):
     expertise = forms.ModelChoiceField(queryset=Service.objects.all(), required=True)
 
     def clean(self):
-        if (self.cleaned_data["password1"] != self.cleaned_data["password2"]):
+        if self.cleaned_data["password1"] != self.cleaned_data["password2"]:
             raise forms.ValidationError("دو رمز عبور واردشده یکسان نمی باشند.")
-        elif (UserController.check_username_is_repetitive(self.expert.pk, self.cleaned_data["username"])):
+        elif UserController.check_username_is_repetitive(
+            self.expert.pk, self.cleaned_data["username"]
+        ):
             raise forms.ValidationError("نام کاربری وارد شده تکرای می باشد.")
-        elif (UserController.check_email_is_repetitive(self.expert.pk, self.cleaned_data["email"])):
+        elif UserController.check_email_is_repetitive(
+            self.expert.pk, self.cleaned_data["email"]
+        ):
             raise forms.ValidationError("ایمیل وارد شده تکرای می باشد.")
 
     class Meta(UserUpdateForm.Meta):
