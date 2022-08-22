@@ -14,12 +14,17 @@ class UserController:
             return ServiceRequest.objects.filter(customer=user)
         elif isinstance(user.role, Expert):
             service_controller = ServiceController()
-            if service_controller.can_expert_accept_more(user):
+            try:
+                if service_controller.can_expert_accept_more(user):
+                    return ServiceRequest.objects.filter(
+                        Q(expert=user) | Q(expert=None, service=user.role.expertise)
+                    )
+                else:
+                    return ServiceRequest.objects.filter(expert=user)
+            except Exception as e:
                 return ServiceRequest.objects.filter(
                     Q(expert=user) | Q(expert=None, service=user.role.expertise)
                 )
-            else:
-                return ServiceRequest.objects.filter(expert=user)
         elif isinstance(user.role, ITManager):
             return ServiceRequest.objects.all()
         elif isinstance(user.role, Manager):
