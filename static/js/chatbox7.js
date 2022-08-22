@@ -64,7 +64,7 @@ function send_message() {
     }
 }
 
-function set_selected_channel(ch, contact_name, avatar) {
+function set_selected_channel(ch, contact_name, avatar, channel_type) {
     selected_channel = ch;
     selected_contact_name = contact_name;
 
@@ -75,6 +75,13 @@ function set_selected_channel(ch, contact_name, avatar) {
     // Update contact avatar
     contact_avatar = document.getElementById('avatar');
     contact_avatar.src = avatar;
+
+    if (channel_type == "Ticket") {
+        contact_avatar.style.display = "none"
+    }
+    else {
+        contact_avatar.style.display = "initial"
+    }
 
     update_chatbox();
 }
