@@ -196,15 +196,15 @@ main header h3 {
 	line-height: 25px;
 	max-width: 90%;
 	display: inline-block;
-	text-align: left;
 	border-radius: 5px;
 }
 
-#chat .me {
-	text-align: right;
+#chat .you {
+	text-align: left;
 }
 
 #chat .you .message {
+	text-align: right;
 	background-color: #58b666;
 }
 

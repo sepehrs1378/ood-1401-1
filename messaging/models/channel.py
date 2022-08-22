@@ -21,14 +21,15 @@ class Channel(models.Model):
     )
     time_of_creation = models.DateField(default=now)
 
-    # Returns the name of the other person on the channel
-    def get_contact_name(self, your_user: User):
+    # Returns the other guy on this channel
+    def get_contact(self, your_user: User):
         if your_user.id == self.customer.id:
-            return self.expert.username
+            return self.expert
         elif your_user.id == self.expert.id:
-            return self.customer.username
+            return self.customer
         else:
             return False
+
 
     def __str__(self) -> str:
         return f"Customer: {self.customer_id} | Expert: {self.expert_id}"
