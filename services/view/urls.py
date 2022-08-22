@@ -92,13 +92,29 @@ urlpatterns = [
         name="category_delete",
     ),
     path(
+        "category",
+        service_view.create_category,
+        name="category_create"
+    ),
+    path(
         "limitations",
         service_view.limitations_list,
         name="limitations_list",
     ),
     path(
-        "category",
-        service_view.create_category,
-        name="category_create"
+        "limitation/<int:limitation_id>",
+        service_view.limitation,
+        name="limitation_update",
     ),
+    path(
+        "limitation/delete/<int:limitation_id>",
+        service_view.delete_limitation,
+        name="limitation_delete",
+    ),
+    path(
+        "limitation",
+        service_view.create_limitation,
+        name="limitation_create"
+    ),
+
 ]

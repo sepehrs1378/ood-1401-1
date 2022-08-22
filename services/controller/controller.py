@@ -191,3 +191,6 @@ class ServiceController:
 
     def get_category(self, category_id):
         return ServiceCategory.objects.get(id=category_id)
+
+    def get_limitation(self, limitation_id):
+        return ServiceRequestLimit.objects.get(id=limitation_id)

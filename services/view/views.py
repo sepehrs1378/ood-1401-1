@@ -8,7 +8,7 @@ from users.models.customer import Customer
 from users.models.expert import Expert
 from django.contrib import messages
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
-from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm, CategoryForm, ServiceRequestForCustomerForm
+from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm, CategoryForm, ServiceRequestForCustomerForm,LimitationForm
 from services.controller.controller import ServiceController
 from django.core import serializers
 
@@ -339,9 +339,6 @@ class ServiceView:
                 return redirect("/services/categories")
             messages.error(request, "Unsuccessful Edit Category Invalid information.")
             msg = form.errors
-        elif request.method == "delete":
-            category.delete()
-            return redirect("categories")
         else:
             form = CategoryForm(instance=category)
         return render(
@@ -359,17 +356,6 @@ class ServiceView:
         category = self.controller.get_category(category_id)
         category.delete()
         return redirect("/services/categories")
-    
-    def limitations_list(self, request):
-        from home_service.dependency_injection import dependency_injector
-        limitations = ServiceRequestLimit.objects.all()
-        return render(
-            request=request,
-            template_name="admin/limitations-list.html",
-            context={
-                "limitations": limitations,
-                "object_name": dependency_injector.user_controller.get_user_info(request.user)},
-        )
 
     def create_category(self, request):
         msg = ""
@@ -386,5 +372,69 @@ class ServiceView:
         return render(
             request=request,
             template_name="admin/category.html",
+            context={"form": form, "msg": msg},
+        )
+
+    def limitations_list(self, request):
+        from home_service.dependency_injection import dependency_injector
+        limitations = ServiceRequestLimit.objects.all()
+        return render(
+            request=request,
+            template_name="admin/limitations-list.html",
+            context={
+                "limitations": limitations,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)},
+        )
+
+
+
+    def limitation(self, request, limitation_id):
+        from home_service.dependency_injection import dependency_injector
+
+        msg = ""
+        limitation = self.controller.get_limitation(limitation_id)
+        if request.method == "POST":
+            form = LimitationForm(request.POST, instance=limitation)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Limitation successful.")
+                return redirect("/services/limitations")
+            messages.error(request, "Unsuccessful Edit Limitation Invalid information.")
+            msg = form.errors
+        else:
+            form = LimitationForm(instance=limitation)
+        return render(
+            request=request,
+            template_name="admin/limitation.html",
+            context={
+                "form": form,
+                "msg": msg,
+                "object_name": dependency_injector.user_controller.get_user_info(
+                    request.user
+                ),
+            },
+        )
+
+    def delete_limitation(self, request, limitation_id):
+        limitation = self.controller.get_limitation(limitation_id)
+        limitation.delete()
+        return redirect("/services/limitations")
+    
+
+    def create_limitation(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = LimitationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Limitation successful.")
+                return redirect('/services/limitations')
+            messages.error(request, "Unsuccessful Edit Limitation Invalid information.")
+            msg = form.errors
+        else:
+            form = LimitationForm()
+        return render(
+            request=request,
+            template_name="admin/limitation.html",
             context={"form": form, "msg": msg},
         )
