@@ -17,6 +17,11 @@ urlpatterns = [
         name="request_service_from_system",
     ),
     path(
+        "request/delete/<int:request_id>",
+        service_view.delete_request,
+        name="delete_request"
+    ),
+    path(
         "request/admin_create",
         service_view.request_service_for_customer,
         name="create_requset_by_admin"
@@ -51,7 +56,16 @@ urlpatterns = [
         service_view.services_list,
         name="services_list",
     ),
-    path("<int:service_id>", service_view.service, name="service_update"),
+    path(
+        "<int:service_id>",
+        service_view.service,
+        name="service_update"
+    ),
+    path(
+        "delete/<int:service_id>", 
+        service_view.delete_service, 
+        name="service_delete"
+    ),
     path(
         "",
         service_view.create_service,
@@ -71,6 +85,11 @@ urlpatterns = [
         "category/<int:category_id>",
         service_view.category,
         name="category_update",
+    ),
+    path(
+        "category/delete/<int:category_id>",
+        service_view.delete_category,
+        name="category_delete",
     ),
     path(
         "limitations",

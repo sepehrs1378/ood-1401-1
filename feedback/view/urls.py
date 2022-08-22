@@ -27,5 +27,8 @@ urlpatterns = [
     path("metric/<int:metric_id>",
          feedback_view.metric,
          name="metric_update"
-    )
+    ),
+    path("metric/delete/<int:metric_id>",
+        feedback_view.delete_metric,
+        name="delete_metric")
 ]

@@ -284,9 +284,6 @@ class ServiceView:
                 return redirect("/services/list")
             messages.error(request, "Unsuccessful Edit Service Invalid information.")
             msg = form.errors
-        elif request.method == "delete":
-            service.delete()
-            return redirect("/services/list")
         else:
             form = ServiceForm(instance=service)
         return render(
@@ -300,6 +297,16 @@ class ServiceView:
                 ),
             },
         )
+
+    def delete_service(self, request, service_id):
+        service = self.controller.get_service(service_id)
+        service.delete()
+        return redirect("/services/list")
+
+    def delete_request(self, request, request_id):
+        request = self.controller.get_request_by_id(request_id)
+        request.delete()
+        return redirect("/users")
 
     def create_service(self, request):
         msg = ""
@@ -348,7 +355,11 @@ class ServiceView:
                 ),
             },
         )
-
+    def delete_category(self, request, category_id):
+        category = self.controller.get_category(category_id)
+        category.delete()
+        return redirect("/services/categories")
+    
     def limitations_list(self, request):
         from home_service.dependency_injection import dependency_injector
         limitations = ServiceRequestLimit.objects.all()

@@ -41,17 +41,20 @@
                         {% include 'services/service-card.html' %}
                         {% include 'services/tree-view.html' %}
                     </div>
-                    {% if user_type == "it_manager" %}
-                    <div>
-                        <a type="button" class="btn btn-pink" href="/services">
-                        <span class="material-symbols-outlined">
-                            add
-                        </span>
+                    {% if user_type == "it_manager" or user_type == "manager" %}
+                    <div class="d-flex justify-content-between">
+                        <a href="/services" class="btn btn-dark py-2 mt-2"
+                            style="color: white;">                    
+                            <span class="material-symbols-outlined">
+                                add
+                            </span>
                             <span>ایجاد سرویس</span>
                         </a>
                     </div>
                     {% endif %}
+
                 </div>
+
             </div>
         </div>
     </div>
