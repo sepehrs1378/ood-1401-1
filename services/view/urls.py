@@ -17,6 +17,11 @@ urlpatterns = [
         name="request_service_from_system",
     ),
     path(
+        "request/admin_create",
+        service_view.request_service_for_customer,
+        name="create_requset_by_admin"
+    ),
+    path(
         "approve/<int:request_id>",
         service_view.approve_request,
         name="approve_request",

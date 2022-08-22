@@ -12,7 +12,6 @@ from users.models.expert import Expert
 from users.models.user import User
 from messaging.models import Channel, Message
 
-
 class ServiceController:
     def get_eligible_experts(self, service: Service) -> List[User]:
         eligible_experts = User.objects.filter(

@@ -1,10 +1,12 @@
 from django import forms
-
+from users.models import User, role, user, Customer
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Div
 from services.models.service import Service, ServiceCategory
 from services.view.exceptions import RepeatedRequestException
+from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
 
 
 class ServiceRequestForm(forms.Form):
@@ -119,6 +121,74 @@ class ServiceRequestFromSystemForm(forms.Form):
         else:
             service_request = ServiceRequest(
                 customer=customer,
+                service=self.cleaned_data["service"],
+                expert=None,
+                status=RequestStatus.NO_EXPERT_FOUND,
+                request_type=RequestType.SYSTEM_SELECTED,
+            )
+
+        service_request.save()
+        return service_request
+
+
+class ServiceRequestForCustomerForm(forms.Form):
+    """
+    This form is used when the customer wants the system to recommend an expert
+    """
+
+    service = forms.ModelChoiceField(queryset=Service.objects.all())
+    customer = forms.ModelChoiceField(queryset=User.objects.filter(role__polymorphic_ctype=ContentType.objects.get_for_model(Customer))) #todo: filter only customers
+    class Meta:
+        fields = ["service" , "customer"]
+
+    def __init__(self, *args, **kwargs):
+        super(ServiceRequestForCustomerForm, self).__init__(*args, **kwargs)
+        self.fields["service"].label = "سرویس انتخاب شده"
+        self.fields["service"].widget.attrs[
+            "style"
+        ] = "text-align: left; direction: ltr;"
+        self.fields["customer"].label = "مشتری"
+        self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Div(
+                "service",
+                css_class="container complete-rtl px-0 mx-0",
+            ),
+            Div(
+                "customer",
+                css_class="container complete-rtl px-0 mx-0",
+            ),
+            Submit(
+                "submit",
+                "ارسال درخواست",
+                css_class="btn btn-dark py-2 mt-2",
+            ),
+        )
+
+    def save(self, service_controller):
+        customer_previous_requests = ServiceRequest.objects.filter(
+            customer=self.cleaned_data["customer"],
+            service=self.cleaned_data["service"],
+            status=RequestStatus.IN_PROGRESS,
+        )
+
+        if len(customer_previous_requests) > 0:
+            raise RepeatedRequestException()
+
+        eligible_experts = service_controller.get_eligible_experts(
+            self.cleaned_data["service"]
+        )
+        if len(eligible_experts) > 0:
+            service_request = ServiceRequest(
+                customer=self.cleaned_data["customer"],
+                service=self.cleaned_data["service"],
+                expert=None,
+                status=RequestStatus.WAIT_FOR_EXPERT_APPROVAL,
+                request_type=RequestType.SYSTEM_SELECTED,
+            )
+        else:
+            service_request = ServiceRequest(
+                customer=self.cleaned_data["customer"],
                 service=self.cleaned_data["service"],
                 expert=None,
                 status=RequestStatus.NO_EXPERT_FOUND,

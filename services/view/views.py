@@ -8,12 +8,7 @@ from users.models.customer import Customer
 from users.models.expert import Expert
 from django.contrib import messages
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
-from services.view.forms import (
-    ServiceRequestForm,
-    ServiceRequestFromSystemForm,
-    ServiceForm,
-    CategoryForm,
-)
+from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm, CategoryForm, ServiceRequestForCustomerForm
 from services.controller.controller import ServiceController
 from django.core import serializers
 
@@ -99,6 +94,37 @@ class ServiceView:
                 "object_name": dependency_injector.user_controller.get_user_info(
                     request.user
                 ),
+            },
+        )
+
+    def request_service_for_customer(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = ServiceRequestForCustomerForm(request.POST)
+            if form.is_valid():
+                try:
+                    service_request = form.save(self.controller)
+                    print(service_request)
+                    print(service_request.id)
+                    msg = "request sent"
+                    if service_request.status == RequestStatus.NO_EXPERT_FOUND:
+                        return redirect("/users")
+                    else:
+                        return redirect(
+                            f"/services/request/finding?request_id={service_request.id}"
+                        )
+                except RepeatedRequestException:
+                    msg = "یک درخواست از این نوع سرویس در حال انجام است."
+        else:
+            form = ServiceRequestForCustomerForm()
+        return render(
+            request=request,
+            template_name="services/request-service.html",
+            context={
+                "request_form": form,
+                "msg": msg,
+                "request_type": RequestType.SYSTEM_SELECTED,
+                "all_services_tree": self.controller.get_service_category_trees(),
             },
         )
 
