@@ -3,22 +3,12 @@
     <div class="container py-4" style="color: white;">
         <div class="row gy-4 gx-5 complete-rtl w-100 d-flex justify-content-between">
             <div class="col-lg-2 col-md-6">
-                <h5 class="text-white mb-3" style="font-weight: bold;">درباره ما</h5>
-                <ul class="list-unstyled px-0">
-                    <li><a href="#">تماس با ما</a></li>
-                    <li><a href="#">بلاگ</a></li>
-                    <li><a href="#">موقعیت‌های شغلی</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-2 col-md-6">
                 <h5 class="text-white mb-3" style="font-weight: bold;">پشتیبانی</h5>
                 <ul class="list-unstyled px-0">
                     {% if user_type == "customer" or user_type == "expert" %}
                     <li><a href="/messaging/ticket/create/">ارسال تیکت</a></li>
                     {% endif %}
                     <li><a href="/messaging/ticket/show-all/">مشاهده همه تیکت‌ها</a></li>
-                    <li><a href="#">راهنمایی</a></li>
-                    <li><a href="#">قوانین</a></li>
                 </ul>
             </div>
             <div class="col-lg-2 col-md-6">

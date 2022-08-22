@@ -19,6 +19,7 @@ class MessagingController:
             ticket_channels = TicketChannel.objects.all()
 
         for channel in ticket_channels:
+            channel.type = "Ticket"
             channel.contact_name = channel.title
             channel.header = channel.title
 
@@ -56,6 +57,7 @@ class MessagingController:
             channel.contact_name = channel.get_contact(user).username
             channel.contact = channel.get_contact(user)
             channel.header = channel.contact_name
+            channel.type = "Chat"
 
         return channels
 
