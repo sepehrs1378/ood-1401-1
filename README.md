@@ -12,6 +12,11 @@ Sepehr Safari
 
 ## Getting Started
 
+### Requirements
+- Docker
+- Docker compose
+- Python3
+
 ### Install
 
 ```
@@ -60,11 +65,12 @@ then go to localhost:8000/admin
 /services/request --> request a new service by customer
 /services/approve/request_id --> approve a request by expert
 /services/finish/request_id --> finish a request by expert
-/messagin/ticket/create --> create a new ticket
+/messaging/ticket/create --> create a new ticket
 /messaging/ticket/send --> send a new message to ticket
 /messaging/ticket/show --> show a ticket details
 /users/profile/customer --> edit customer profile
 /users/profile/expert --> edit expert profile
+...
 ```
 
 ## Sub-systems (= django apps)
@@ -73,4 +79,4 @@ then go to localhost:8000/admin
 - Feedback
 - Reporting
 - Service
-- Admin (django admin is used)
+- Admin (django admin is used + Admin dashboard is implemented)
