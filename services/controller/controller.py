@@ -39,7 +39,7 @@ class ServiceController:
         )
         rate = self.get_average_rate(expert)
         limit = ServiceRequestLimit.objects.filter(
-            max_average_rate=math.ceil(rate)
+            max_average_rate=max(math.ceil(rate), 1)
         ).first()
         return active_requests.count() < limit.max_active_request
 
