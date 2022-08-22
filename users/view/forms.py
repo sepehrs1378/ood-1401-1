@@ -15,6 +15,7 @@ class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
     phone_number = forms.CharField(max_length=11, required=True)
     name = forms.CharField(required=True)
+    avatar = forms.ImageField(required=False)
 
     class Meta:
         model = User
@@ -23,6 +24,7 @@ class UserRegisterForm(UserCreationForm):
             "name",
             "email",
             "phone_number",
+            "avatar",
             "password1",
             "password2",
         )
@@ -53,6 +55,7 @@ class CustomerRegisterForm(UserRegisterForm):
             self,
         ).save(commit=False)
         user.email = self.cleaned_data["email"]
+        user.avatar = self.cleaned_data["avatar"]
         role = Customer.objects.create(address=self.cleaned_data["address"])
         user.role = role
         if commit:
@@ -67,18 +70,24 @@ class CustomerRegisterForm(UserRegisterForm):
         self.fields["phone_number"].widget.attrs["placeholder"] = "شماره تلفن همراه"
         self.fields["password1"].widget.attrs["placeholder"] = "رمز عبور"
         self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور"
+        self.fields["avatar"].widget.attrs["placeholder"] = "لطفا آواتار خود را انتخاب کنید."
+
         self.fields["username"].label = ""
         self.fields["name"].label = ""
         self.fields["email"].label = ""
         self.fields["phone_number"].label = ""
         self.fields["password1"].label = ""
         self.fields["password2"].label = ""
+        self.fields["avatar"].label = ""
+
         self.fields["username"].help_text = None
         self.fields["name"].help_text = None
         self.fields["email"].help_text = None
         self.fields["phone_number"].help_text = None
         self.fields["password1"].help_text = None
         self.fields["password2"].help_text = None
+        self.fields["avatar"].help_text = None
+
         self.fields["username"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
@@ -92,12 +101,19 @@ class CustomerRegisterForm(UserRegisterForm):
         self.fields["password1"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
+        self.fields["avatar"].widget.attrs[
+            "style"
+        ] = "text-align: left; direction: ltr;"
         self.fields["password2"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Div("avatar", css_class="col"),
+                    css_class="row",
+                ),
                 Div(
                     Div("username", css_class="col"),
                     Div("name", css_class="col"),
@@ -146,6 +162,7 @@ class ExpertRegisterForm(UserRegisterForm):
         )
         user.role = role
         user.email = self.cleaned_data["email"]
+        user.avatar = self.cleaned_data["avatar"]
         if commit:
             user.save()
         return user
@@ -160,6 +177,8 @@ class ExpertRegisterForm(UserRegisterForm):
         self.fields["password2"].widget.attrs["placeholder"] = "تکرار رمز عبور"
         self.fields["expertise"].widget.attrs["placeholder"] = "انتخاب تخصص"
         self.fields["document"].widget.attrs["placeholder"] = "آپلود مدارک"
+        self.fields["avatar"].widget.attrs["placeholder"] = "لطفا آواتار خود را انتخاب کنید."
+
         self.fields["username"].label = ""
         self.fields["name"].label = ""
         self.fields["email"].label = ""
@@ -168,6 +187,8 @@ class ExpertRegisterForm(UserRegisterForm):
         self.fields["password2"].label = ""
         self.fields["expertise"].label = "انتخاب تخصص"
         self.fields["document"].label = "آپلود مدارک"
+        self.fields["avatar"].label = ""
+
         self.fields["username"].help_text = None
         self.fields["name"].help_text = None
         self.fields["email"].help_text = None
@@ -176,6 +197,8 @@ class ExpertRegisterForm(UserRegisterForm):
         self.fields["password2"].help_text = None
         self.fields["expertise"].help_text = None
         self.fields["document"].help_text = None
+        self.fields["avatar"].help_text = None
+
         self.fields["username"].widget.attrs[
             "style"
         ] = "text-align: right; direction: rtl;"
@@ -195,12 +218,19 @@ class ExpertRegisterForm(UserRegisterForm):
         self.fields["expertise"].widget.attrs[
             "style"
         ] = "text-align: left; direction: ltr;"
+        self.fields["avatar"].widget.attrs[
+            "style"
+        ] = "text-align: left; direction: ltr;"
         self.fields["document"].widget.attrs[
             "style"
         ] = "text-align: left; direction: ltr;"
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Div(
+                Div(
+                    Div("avatar", css_class="col"),
+                    css_class="row",
+                ),
                 Div(
                     Div("username", css_class="col"),
                     Div("name", css_class="col"),
