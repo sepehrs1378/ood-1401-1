@@ -1,4 +1,8 @@
-<table class="table table-hover">
+{% load static %}
+<script src="{% static 'js/report/export_function.js' %}"></script>
+
+<table class="table table-hover" id="requests-table">
+    {% include "report/export_input.html" with rows=requests_dict table_id="requests-table" %}
     <thead class="list-header">
         <tr>
             <th class="list-header-column" scope="col">عملیات</th>

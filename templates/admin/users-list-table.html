@@ -1,4 +1,9 @@
-<table class="table table-hover">
+{% load static %}
+<script src="{% static 'js/report/export_function.js' %}"></script>
+
+<table class="table table-hover" id="user-table">
+    {% include "report/export_input.html" with rows=users_dict table_id="user-table" %}
+
     <thead class="list-header">
         <tr>
             <th class="list-header-column" scope="col">عملیات</th>
@@ -18,7 +23,7 @@
                     <a class="dropdown-item" href="profile/{{ user.id }}">ویرایش</a>
                     <a class="dropdown-item">حذف</a>
                     {% if user.get_user_type_str == "expert" %}
-                        <a class="dropdown-item" >تایید مدارک</a>
+                    <a class="dropdown-item">تایید مدارک</a>
                     {% endif %}
                 </div>
             </td>

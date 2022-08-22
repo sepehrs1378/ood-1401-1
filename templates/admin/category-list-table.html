@@ -1,14 +1,18 @@
-<table class="table table-hover">
+{% load static %}
+<script src="{% static 'js/report/export_function.js' %}"></script>
+
+<table class="table table-hover" id="category-table">
+    {% include "report/export_input.html" with rows=category_dict table_id="category-table" %}
     <thead class="list-header">
-    <tr>
-        <th class="list-header-column" scope="col">عملیات</th>
-        <th class="list-header-column" scope="col">نام دسته بندی</th>
-        <th class="list-header-column" scope="col">دسته بندی مادر</th>
-        <th class="list-header-column" scope="col">توضیحات</th>
-    </tr>
+        <tr>
+            <th class="list-header-column" scope="col">عملیات</th>
+            <th class="list-header-column" scope="col">نام دسته بندی</th>
+            <th class="list-header-column" scope="col">دسته بندی مادر</th>
+            <th class="list-header-column" scope="col">توضیحات</th>
+        </tr>
     </thead>
     <tbody>
-    {% for category in categories %}
+        {% for category in categories %}
         <tr class="list-entry">
             <td>
                 <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
@@ -23,13 +27,13 @@
             <td>{{ category.name }}</td>
             <td>
                 {% if category.parent.name == None %}
-                    ندارد
+                ندارد
                 {% else %}
-                    {{ category.parent.name }}
+                {{ category.parent.name }}
                 {% endif %}
             </td>
             <td>{{ category.description }}</td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </tbody>
 </table>

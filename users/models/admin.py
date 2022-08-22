@@ -4,10 +4,18 @@ from .customer import Customer
 from .expert import Expert
 from .it_manager import ITManager
 from .manager import Manager
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 
-class UserAdmin(admin.ModelAdmin):
-    pass
+class UserAdmin(DjangoUserAdmin):
+    fieldsets = DjangoUserAdmin.fieldsets + (
+        (
+            "User Specific Fields",  # you can also use None
+            {
+                "fields": ("name", "phone_number", "avatar", "role"),
+            },
+        ),
+    )
 
 
 class CustomerAdmin(admin.ModelAdmin):

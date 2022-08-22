@@ -2,20 +2,20 @@
 
 {% block content %}
 
-    {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
-    <div class="main-box">
-        <!-- Navigation -->
-        <div class="navigation complete-rtl">
-            خانه / صفحه مدیر فنی / معیارهای ارزیابی
-        </div>
+<div class="main-box">
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        خانه / صفحه مدیر / معیارهای ارزیابی
+    </div>
 
-        <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-            {% include 'users/it_manager/sidebar.html' %}
-            <div class="mainpage">
-                {% include 'admin/metrics-list-table.html' %}
-            </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'users/it_manager/sidebar.html' %}
+        <div class="mainpage">
+            {% include 'admin/metrics-list-table.html' %}
         </div>
     </div>
+</div>
 
 {% endblock %}

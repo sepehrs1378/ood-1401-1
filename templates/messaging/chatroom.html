@@ -20,8 +20,10 @@
         خانه / صفحه مشتری / {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
         {% elif user_type == "expert"%}
         خانه / صفحه متخصص / {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
+        {% elif user_type == "it_manager" %}
+        خانه / صفحه مدیر فنی/ {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
         {% else %}
-            خانه / صفحه مدیر فنی/ {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
+        خانه / صفحه مدیر شرکت/ {% if is_for_chat %}جعبه پیام‌ها{% else %}جعبه تیکت‌ها{% endif %}
         {% endif %}
 
     </div>

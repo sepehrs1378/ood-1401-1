@@ -1,4 +1,5 @@
 from typing import Dict, Type
+from xml.etree.ElementInclude import include
 from django.shortcuts import render, redirect
 from users.controller.controller import UserController
 
@@ -10,6 +11,7 @@ from users.view.forms import *
 from django.contrib.auth import login
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
+from django.core import serializers
 
 
 class UserView:
@@ -61,16 +63,26 @@ class UserView:
     def home_page(self, request):
         user_type = None
         service_requests = None
+        requests_dict = None
         if request.user and request.user.is_authenticated:
             user_type = request.user.get_user_type_str()
             service_requests = self.controller.get_service_requests_list(request.user)
+            requests_dict = serializers.serialize("json", list(service_requests))
         return render(
             request=request,
             template_name="index.html",
             context={
                 "user_type": user_type,
                 "service_requests": service_requests,
-                "object_name": self.controller.get_user_info(request.user)
+                "object_name": self.controller.get_user_info(request.user),
+                "requests_dict": requests_dict,
+                "field_names": [
+                    "status",
+                    "service",
+                    "customer",
+                    "expert",
+                    "created_at",
+                ],
             }
             if user_type
             else {},
@@ -108,8 +120,13 @@ class UserView:
 
     def render_profile_form(self, request, user: Type[User], role_type: Type[Role]):
         msg = ""
+        include_password = isinstance(request.user.role, Expert) or isinstance(
+            request.user.role, Customer
+        )
         if request.method == "POST":
-            form = self.edit_forms.get(role_type)(user, request.POST, request.FILES)
+            form = self.edit_forms.get(role_type)(
+                user, include_password, request.POST, request.FILES
+            )
             if form.is_valid():
                 form.save(user)
                 messages.success(request, "Edit Profile successful.")
@@ -117,7 +134,7 @@ class UserView:
             messages.error(request, "Unsuccessful Edit Profile Invalid information.")
             msg = form.errors
         else:
-            form = self.edit_forms.get(role_type)(user)
+            form = self.edit_forms.get(role_type)(user, include_password)
         print(user.avatar)
         return render(
             request=request,
@@ -127,7 +144,7 @@ class UserView:
                 "msg": msg,
                 "user_type": request.user.get_user_type_str(),
                 "profile_type": role_type.__name__,
-                "object_name": user
+                "object_name": user,
             },
         )
 
@@ -135,6 +152,7 @@ class UserView:
         def profile_view(request):
             user = self.controller.get_user_info(request.user)
             return self.render_profile_form(request, user, role_type)
+
         return profile_view
 
     def edit_profile(self, request, user_id):
@@ -144,10 +162,13 @@ class UserView:
 
     def list_users(self, request):
         users = self.controller.get_all_users()
+        users_dict = serializers.serialize("json", users)
         return render(
             request=request,
             template_name="admin/users-list.html",
             context={
                 "users": users,
-            }
+                "users_dict": users_dict,
+                "field_names": ["name", "username", "phone_number", "email"],
+            },
         )

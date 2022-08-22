@@ -3,6 +3,7 @@ from users.models.user import User
 from users.models.expert import Expert
 from users.models.customer import Customer
 from users.models.it_manager import ITManager
+from users.models.manager import Manager
 from services.models.service_request import ServiceRequest
 
 
@@ -16,6 +17,8 @@ class UserController:
             )
         elif isinstance(user.role, ITManager):
             return ServiceRequest.objects.all()
+        elif isinstance(user.role, Manager):
+            return ServiceRequest.objects.all()
         return []
 
     def change_expert_status(self, user: User):
@@ -28,7 +31,7 @@ class UserController:
         return User.objects.get(username=user.username)
 
     def get_user(self, user_id: int):
-        return User.objects.get(id= user_id)
+        return User.objects.get(id=user_id)
 
     def check_username_is_repetitive(myPk, myUsername):
         return User.objects.filter(~Q(pk=myPk) & Q(username=myUsername)).exists()

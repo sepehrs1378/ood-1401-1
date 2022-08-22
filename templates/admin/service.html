@@ -2,18 +2,18 @@
 
 {% block content %}
 
-    {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
-    <div class="main-box">
-        <!-- Navigation -->
-        <div class="navigation complete-rtl">
-            خانه / صفحه مدیر فنی / سرویس
-        </div>
-        <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-            {% include 'users/it_manager/sidebar.html' %}
-            {% include 'services/service-form.html' %}
-        </div>
-
+<div class="main-box">
+    <!-- Navigation -->
+    <div class="navigation complete-rtl">
+        خانه / صفحه مدیر / سرویس
     </div>
+    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+        {% include 'includes/sidebar.html' %}
+        {% include 'services/service-form.html' %}
+    </div>
+
+</div>
 
 {% endblock %}
