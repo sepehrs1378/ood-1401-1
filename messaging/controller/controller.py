@@ -19,6 +19,7 @@ class MessagingController:
             ticket_channels = TicketChannel.objects.all()
 
         for channel in ticket_channels:
+            channel.user = channel.creator
             channel.type = "Ticket"
             channel.contact_name = channel.title
             channel.header = channel.title

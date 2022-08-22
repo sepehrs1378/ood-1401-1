@@ -103,5 +103,9 @@ class MessagingView:
         return render(
             request=request,
             template_name="messaging/chatroom.html",
-            context={"channels": channels, "user_type": user_type, "is_for_chat": True, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
+            context={
+                "channels": channels,
+                "user_type": user_type,
+                "is_for_chat": True,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )
