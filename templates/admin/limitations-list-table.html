@@ -1,0 +1,36 @@
+<table class="table table-hover" id="category-table">
+    <div class="w-100 d-flex">
+        <div class="input-group search-inner">
+            <div>
+                در اینجا می توانید برای تعداد درخواست‌های فعال متخصصین، براساس امتیاز آن‌ها محدودیت تعیین کنید.
+            </div>
+        </div>
+    </div>
+
+    <thead class="list-header">
+        <tr>
+            <th class="list-header-column" scope="col">عملیات</th>
+            <th class="list-header-column" scope="col">کمترین امتیاز</th>
+            <th class="list-header-column" scope="col">بیشترین امتیاز</th>
+            <th class="list-header-column" scope="col">حداکثر تعداد درخواست‌های فعال</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for limit in limitations %}
+        <tr class="list-entry">
+            <td>
+                <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
+                    ...
+                </button>
+                <div class="dropdown-menu complete-rtl">
+                    <a class="dropdown-item" href="profile/{{ user.id }}">ویرایش</a>
+                    <a class="dropdown-item">حذف</a>
+                </div>
+            </td>
+            <td>{{ limit.min_average_rate }}</td>
+            <td>{{ limit.max_average_rate }}</td>
+            <td>{{ limit.max_active_request }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -12,8 +12,10 @@
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
         {% if request.user.get_user_type_str == "customer" %}
         {% include 'users/customer/sidebar.html' with avatar=user.avatar %}
-        {% else %}
+        {% elif request.user.get_user_type_str == "expert" %}
         {% include 'users/expert/sidebar.html' with avatar=user.avatar %}
+        {% else %}
+        {% include 'users/it_manager/sidebar.html' with avatar=user.avatar %}
         {% endif %}
         {% include 'feedback/feedback-form.html' %}
     </div>

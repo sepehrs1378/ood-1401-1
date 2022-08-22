@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Union
 from django.contrib.contenttypes.models import ContentType
 
@@ -5,6 +6,7 @@ from feedback.models.feedback import Feedback
 from services.models.service import Service
 from services.models.service_category import ServiceCategory
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
+from services.models.service_request_limit import ServiceRequestLimit
 from users.models import user
 from users.models.expert import Expert
 from users.models.user import User
@@ -30,6 +32,16 @@ class ServiceController:
             return User.objects.filter(role=role).first()
         except Exception as e:
             return None
+
+    def can_expert_accept_more(self, expert):
+        active_requests = ServiceRequest.objects.filter(
+            expert=expert, status=RequestStatus.IN_PROGRESS
+        )
+        rate = self.get_average_rate(expert)
+        limit = ServiceRequestLimit.objects.filter(
+            max_average_rate=math.ceil(rate)
+        ).first()
+        return active_requests.count() < limit.max_active_request
 
     def get_service_category_trees(self, query=None) -> List[Dict]:
         root_services = ServiceCategory.objects.filter(parent=None)
@@ -142,9 +154,12 @@ class ServiceController:
             rate_count = 0
             for service in service_requests:
                 feedback = Feedback.objects.filter(service_request=service).first()
-                for rate in feedback.feedbacks.all():
-                    rate_sum = rate_sum + rate.rate
-                    rate_count = rate_count + 1
+                try:
+                    for rate in feedback.feedbacks.all():
+                        rate_sum = rate_sum + rate.rate
+                        rate_count = rate_count + 1
+                except Exception:
+                    pass
             return round(rate_sum / rate_count, ndigits=2)
         except Exception as e:
             print(e)

@@ -23,6 +23,9 @@
                 <div class="dropdown-menu complete-rtl">
                     <a class="dropdown-item" href="/services/approve/{{ request.id }}">ویرایش</a>
                     <a class="dropdown-item" href="/services/reject/{{ request.id }}">حذف</a>
+                    {% if request.status == "FEEDBACK_RECEIVED" %}
+                    <a class="dropdown-item" href="/feedback/get/{{ request.id }}">مشاهده بازخورد</a>
+                    {% endif %}
                 </div>
             </td>
             <td>
