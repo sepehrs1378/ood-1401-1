@@ -64,13 +64,17 @@ function send_message() {
     }
 }
 
-function set_selected_channel(ch, contact_name) {
+function set_selected_channel(ch, contact_name, avatar) {
     selected_channel = ch;
     selected_contact_name = contact_name;
 
     // Update contact name
     contact_name_header = document.getElementById('chat-header');
     contact_name_header.innerHTML = contact_name;
+
+    // Update contact avatar
+    contact_avatar = document.getElementById('avatar');
+    contact_avatar.src = avatar;
 
     update_chatbox();
 }

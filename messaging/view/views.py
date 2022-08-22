@@ -30,7 +30,11 @@ class MessagingView:
         return render(
             request=request,
             template_name="messaging/create_ticket.html",
-            context={"request_form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
+            context={
+                "request_form": form,
+                "msg": msg,
+                "user_type": request.user.get_user_type_str(),
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )
 
     def show_all_tickets(self, request):

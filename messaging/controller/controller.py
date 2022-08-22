@@ -54,6 +54,7 @@ class MessagingController:
 
         for channel in channels:
             channel.contact_name = channel.get_contact(user).username
+            channel.contact = channel.get_contact(user)
             channel.header = channel.contact_name
 
         return channels

@@ -16,7 +16,7 @@
     <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
         {% if user_type == "customer" %}
         {% include 'users/customer/sidebar.html' with avatar=user.avatar %}
-        {% else %}
+        {% elif user_type == "expert" %}
         {% include 'users/expert/sidebar.html' with avatar=user.avatar %}
         {% endif %}
         <div class="container py-5">
