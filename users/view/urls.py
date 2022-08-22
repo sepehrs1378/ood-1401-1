@@ -28,4 +28,6 @@ urlpatterns = [
     path("profile/customer", user_view.profile(Customer), name="my_profile"),
     path("profile/expert", user_view.profile(Expert), name="my_profile"),
     path("profile/<int:user_id>", user_view.edit_profile, name="profile"),
+    path("profile/delete/<int:user_id>", user_view.delete_profile, name="profile"),
+
 ]

@@ -160,6 +160,12 @@ class UserView:
         role_type = user.role.__class__
         return self.render_profile_form(request, user, role_type)
 
+    def delete_profile(self, request, user_id):
+        user = self.controller.get_user(user_id)
+        user.delete()
+        return redirect("/users/list")
+
+
     def list_users(self, request):
         users = self.controller.get_all_users()
         users_dict = serializers.serialize("json", users)
