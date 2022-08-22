@@ -11,6 +11,9 @@ class ITManager(Role):
         self.is_superuser = True
         self.is_staff = True
 
+    def get_type_name(self):
+        return "مدیر فنی"
+
     class Meta:
         verbose_name = "ITManager"
         verbose_name_plural = "ITManagers"

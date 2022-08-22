@@ -219,6 +219,7 @@ class ServiceView:
                 "object_name": dependency_injector.user_controller.get_user_info(
                     request.user
                 ),
+                "query": query,
             },
         )
 

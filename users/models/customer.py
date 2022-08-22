@@ -9,6 +9,9 @@ class Customer(Role):
 
     address = models.TextField(max_length=200, blank=True, null=True)
 
+    def get_type_name(self):
+        return "مشتری"
+
     class Meta:
         verbose_name = "Customer"
         verbose_name_plural = "Customers"

@@ -1,3 +1,4 @@
+{% load status_classnames %}
 <table class="table table-hover">
     <thead class="list-header">
         <tr>
@@ -39,7 +40,9 @@
                 {% endif %}
             </td>
             <td>
-                {{ request.get_status_display }}
+                <button type="button" class="btn btn-outline-{{ request.status|get_css_class }}">
+                    {{request.get_status_display}}
+                </button>
             </td>
             <td>{{ request.service }}</td>
             <td>{{ request.customer.name }}</td>
