@@ -24,17 +24,18 @@
                     createSublist(li, nodes);
                 } else {
                     li["row"] = row;
-                    li.addEventListener('click', function (e) {
-                        $('#id_service').val(e.target.parentElement.row.id);
-                        $('#card_container').css("visibility", "visible");
-                        $('#service_info').text(e.target.parentElement.row.desc);
-                        $('#service_info_title').text(e.target.parentElement.row.name);
-                        console.log("sddddddddddddddddddd")
-                        $('#service_edit').prop("href", e.target.parentElement.row.id)
-                        e.stopPropagation();
-                        return true;
-                    });
-                    li.classList.add("onclick-item");
+                    if (!row["children"]) {
+                        li.addEventListener('click', function (e) {
+                            $('#id_service').val(e.target.parentElement.row.id);
+                            $('#card_container').css("visibility", "visible");
+                            $('#service_info').text(e.target.parentElement.row.desc);
+                            $('#service_info_title').text(e.target.parentElement.row.name);
+                            $('#service_edit').prop("href", e.target.parentElement.row.id)
+                            e.stopPropagation();
+                            return true;
+                        });
+                        li.classList.add("onclick-item");
+                    }
                 }
 
                 ul.appendChild(li);
@@ -116,12 +117,17 @@
     <script>
         var toggler = document.getElementsByClassName("caret");
         var i;
+        const query = '{{ query }}';
+        console.log("query ==> ", query);
 
         for (i = 0; i < toggler.length; i++) {
             toggler[i].addEventListener("click", function () {
                 this.parentElement.querySelector(".nested").classList.toggle("active");
                 this.classList.toggle("caret-down");
             });
+            if (query != null && query != '' && query != undefined && query != "None") {
+                toggler[i].click();
+            }
         } 
     </script>
 

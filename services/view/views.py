@@ -1,6 +1,8 @@
+from cmath import exp
 from traceback import print_tb
 from django.shortcuts import render, redirect
 from feedback.models.feedback import Feedback
+from services.models.service_request_limit import ServiceRequestLimit
 from services.view.exceptions import RepeatedRequestException
 from users.models.customer import Customer
 from users.models.expert import Expert
@@ -46,6 +48,8 @@ class ServiceView:
             form = ServiceRequestForm(expert=expert, customer=request.user)
             if not expert:
                 msg = "Invalid expert selected"
+            if not self.controller.can_expert_accept_more(expert):
+                msg = "مطابق محدودیت‌ها، این متخصص نمی تواند درخواست بیشتری را بپذیرد."
 
         return render(
             request=request,
@@ -219,6 +223,7 @@ class ServiceView:
                 "object_name": dependency_injector.user_controller.get_user_info(
                     request.user
                 ),
+                "query": query,
             },
         )
 
@@ -298,4 +303,12 @@ class ServiceView:
                     request.user
                 ),
             },
+        )
+
+    def limitations_list(self, request):
+        limitations = ServiceRequestLimit.objects.all()
+        return render(
+            request=request,
+            template_name="admin/limitations-list.html",
+            context={"limitations": limitations},
         )

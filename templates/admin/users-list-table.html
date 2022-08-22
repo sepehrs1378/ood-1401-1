@@ -31,7 +31,17 @@
             <td id="date-item-{{ user.username }}">
                 <!-- {{ user.last_login|date:"Y M d" }} -->
             </td>
-            <td>{{ user.role }}</td>
+            <td>
+                {% if user.role.get_type_name == "مشتری" %}
+                <button type="button" class="btn btn-outline-success status-entry">{{ user.role }}</button>
+                {% elif user.role.get_type_name == "مدیر" %}
+                <button type="button" class="btn btn-outline-dark status-entry">{{ user.role }}</button>
+                {% elif user.role.get_type_name == "متخصص" %}
+                <button type="button" class="btn btn-outline-primary status-entry">{{ user.role }}</button>
+                {% else %}
+                <button type="button" class="btn btn-outline-dark status-entry">{{ user.role }}</button>
+                {% endif %}
+            </td>
             <td>{{ user.name }}</td>
 
             <script>

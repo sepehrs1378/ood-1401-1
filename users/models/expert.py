@@ -18,6 +18,9 @@ class Expert(Role):
     )
     status = models.BooleanField(default=True, blank=False, null=False)
 
+    def get_type_name(self):
+        return "متخصص"
+
     class Meta:
         verbose_name = "Expert"
         verbose_name_plural = "Experts"

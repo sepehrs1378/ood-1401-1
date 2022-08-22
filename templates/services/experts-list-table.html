@@ -28,12 +28,14 @@
                     <button role="button" type="button" class="btn dropdown" data-toggle="dropdown">
                         ...
                     </button>
+                    {% if user_type == "customer" %}
                     <div class="dropdown-menu complete-rtl">
                         {% if expert.role.status %}
                         <a class="dropdown-item" href="/services/request/{{ expert.id }}">درخواست سرویس</a>
                         {% endif %}
                         <a class="dropdown-item" href="#">جزئیات</a>
                     </div>
+                    {% endif %}
                 </td>
                 <td>
                     {% if expert.role.status %}

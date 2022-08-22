@@ -1,4 +1,5 @@
 from django.db.models import Q
+from services.controller.controller import ServiceController
 from users.models.user import User
 from users.models.expert import Expert
 from users.models.customer import Customer
@@ -12,9 +13,13 @@ class UserController:
         if isinstance(user.role, Customer):
             return ServiceRequest.objects.filter(customer=user)
         elif isinstance(user.role, Expert):
-            return ServiceRequest.objects.filter(
-                Q(expert=user) | Q(expert=None, service=user.role.expertise)
-            )
+            service_controller = ServiceController()
+            if service_controller.can_expert_accept_more(user):
+                return ServiceRequest.objects.filter(
+                    Q(expert=user) | Q(expert=None, service=user.role.expertise)
+                )
+            else:
+                return ServiceRequest.objects.filter(expert=user)
         elif isinstance(user.role, ITManager):
             return ServiceRequest.objects.all()
         elif isinstance(user.role, Manager):
