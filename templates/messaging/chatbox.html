@@ -16,7 +16,10 @@
 				<div class="container py-3 d-flex align-items-center">
 					{% if channel.type == "Chat" %}
 						<img src ="{{ channel.contact.avatar.url }}", alt="Avatar", width="50", onerror=this.src="{% static 'icons/account.svg' %}">
+					{% elif user_type == "manager" or user_type == "it_manager" %}
+						<img src ="{{ channel.user.avatar.url }}", alt="Avatar", width="50", onerror=this.src="{% static 'icons/account.svg' %}">
 					{% endif %}
+
 					<h2>{{ channel.contact_name }}</h2>
 				</div>
 			</li>

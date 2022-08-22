@@ -3,8 +3,7 @@
 <div class="sidebar no-link">
     <div class="container py-3 d-flex justify-content-between align-items-center">
         <div class="avatar">
-            <img src="{{ avatar.url }}" , alt="Avatar" , width="100" ,
-                onerror=this.src="{% static 'icons/account.svg' %}">
+            <img src ="{{ avatar.url }}", alt="Avatar", width="100", onerror=this.src="{% static 'icons/account.svg' %}">
         </div>
         <div class="">{{ user.name }}</div>
         <button type="button" class="btn btn-outline-success status" style="visibility: hidden;">فعال</button>

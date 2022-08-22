@@ -306,9 +306,12 @@ class ServiceView:
         )
 
     def limitations_list(self, request):
+        from home_service.dependency_injection import dependency_injector
         limitations = ServiceRequestLimit.objects.all()
         return render(
             request=request,
             template_name="admin/limitations-list.html",
-            context={"limitations": limitations},
+            context={
+                "limitations": limitations,
+                "object_name": dependency_injector.user_controller.get_user_info(request.user)},
         )

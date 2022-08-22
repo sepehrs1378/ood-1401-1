@@ -32,7 +32,7 @@
         {% include 'users/it_manager/sidebar.html' with avatar=user.avatar %}
         {% include 'users/it_manager/mainpage.html' %}
     </div>
-    {% else %}
+    {% elif user_type == "manager" %}
     <div class="navigation complete-rtl">
         خانه / صفحه مدیر شرکت / درخواست های ایجاد شده
     </div>
