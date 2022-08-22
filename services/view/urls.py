@@ -17,6 +17,16 @@ urlpatterns = [
         name="request_service_from_system",
     ),
     path(
+        "request/delete/<int:request_id>",
+        service_view.delete_request,
+        name="delete_request"
+    ),
+    path(
+        "request/admin_create",
+        service_view.request_service_for_customer,
+        name="create_requset_by_admin"
+    ),
+    path(
         "approve/<int:request_id>",
         service_view.approve_request,
         name="approve_request",
@@ -46,7 +56,21 @@ urlpatterns = [
         service_view.services_list,
         name="services_list",
     ),
-    path("<int:service_id>", service_view.service, name="service_update"),
+    path(
+        "<int:service_id>",
+        service_view.service,
+        name="service_update"
+    ),
+    path(
+        "delete/<int:service_id>", 
+        service_view.delete_service, 
+        name="service_delete"
+    ),
+    path(
+        "",
+        service_view.create_service,
+        name="service_create"
+    ),
     path(
         "request/finding",
         service_view.finding_expert,
@@ -63,8 +87,34 @@ urlpatterns = [
         name="category_update",
     ),
     path(
+        "category/delete/<int:category_id>",
+        service_view.delete_category,
+        name="category_delete",
+    ),
+    path(
+        "category",
+        service_view.create_category,
+        name="category_create"
+    ),
+    path(
         "limitations",
         service_view.limitations_list,
         name="limitations_list",
     ),
+    path(
+        "limitation/<int:limitation_id>",
+        service_view.limitation,
+        name="limitation_update",
+    ),
+    path(
+        "limitation/delete/<int:limitation_id>",
+        service_view.delete_limitation,
+        name="limitation_delete",
+    ),
+    path(
+        "limitation",
+        service_view.create_limitation,
+        name="limitation_create"
+    ),
+
 ]

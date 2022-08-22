@@ -12,7 +12,6 @@ from users.models.expert import Expert
 from users.models.user import User
 from messaging.models import Channel, Message
 
-
 class ServiceController:
     def get_eligible_experts(self, service: Service) -> List[User]:
         eligible_experts = User.objects.filter(
@@ -192,3 +191,6 @@ class ServiceController:
 
     def get_category(self, category_id):
         return ServiceCategory.objects.get(id=category_id)
+
+    def get_limitation(self, limitation_id):
+        return ServiceRequestLimit.objects.get(id=limitation_id)

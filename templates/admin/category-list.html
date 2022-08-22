@@ -10,12 +10,21 @@
         خانه / صفحه مدیر / دسته بندی‌ها
     </div>
 
-    <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
-        {% include 'users/it_manager/sidebar.html' with avatar=user.avatar %}
-        <div class="mainpage">
-            {% include 'admin/category-list-table.html' %}
+        <div class="d-flex complete-rtl py-4 justify-content-between align-items-start">
+            {% include 'users/it_manager/sidebar.html' with avatar=user.avatar %}
+            <div class="mainpage">
+                {% include 'admin/category-list-table.html' %}
+                <div>
+                   <a type="button" class="btn btn-pink d-flex" href="category">
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+                        <span>ایجاد دسته بندی</span>
+                    </a>
+                </div>
+            </div>
         </div>
+
     </div>
-</div>
 
 {% endblock %}

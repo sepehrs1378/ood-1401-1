@@ -85,13 +85,33 @@ class FeedbackView:
                 return redirect("/feedback/metrics")
             messages.error(request, "Unsuccessful Edit Metric Invalid information.")
             msg = form.errors
-        elif request.method == "delete":
-            metric.delete()
-            return redirect("/feedback/metrics")
         else:
             form = MetricForm(instance=metric)
         return render(
             request=request,
             template_name="admin/metric.html",
             context={"form": form, "msg": msg, "object_name": dependency_injector.user_controller.get_user_info(request.user)},
+        )
+
+    def delete_metric(self,request, metric_id):
+        metric = EvaluationMetric.objects.get(id=metric_id)
+        metric.delete()
+        return redirect("/feedback/metrics")
+
+    def create_metric(self, request):
+        msg=""
+        if request.method == "POST":
+            form = MetricForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Metric Created Successfully")
+                return redirect("/feedback/metrics")
+            messages.error(request, "Unsuccessful Edit Metric Invalid information.")
+            msg = form.errors
+        else:
+            form = MetricForm()
+        return render(
+            request=request,
+            template_name="admin/metric.html",
+            context={"form": form, "msg": msg},
         )

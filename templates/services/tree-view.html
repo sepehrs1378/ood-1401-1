@@ -30,7 +30,8 @@
                             $('#card_container').css("visibility", "visible");
                             $('#service_info').text(e.target.parentElement.row.desc);
                             $('#service_info_title').text(e.target.parentElement.row.name);
-                            $('#service_edit').prop("href", e.target.parentElement.row.id)
+                            $('#service_edit').prop("href", e.target.parentElement.row.id);
+                            $('#service_delete').prop("href", ("delete/"+ e.target.parentElement.row.id));
                             e.stopPropagation();
                             return true;
                         });

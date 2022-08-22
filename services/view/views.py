@@ -8,12 +8,7 @@ from users.models.customer import Customer
 from users.models.expert import Expert
 from django.contrib import messages
 from services.models.service_request import RequestStatus, RequestType, ServiceRequest
-from services.view.forms import (
-    ServiceRequestForm,
-    ServiceRequestFromSystemForm,
-    ServiceForm,
-    CategoryForm,
-)
+from services.view.forms import ServiceRequestForm, ServiceRequestFromSystemForm, ServiceForm, CategoryForm, ServiceRequestForCustomerForm,LimitationForm
 from services.controller.controller import ServiceController
 from django.core import serializers
 
@@ -99,6 +94,37 @@ class ServiceView:
                 "object_name": dependency_injector.user_controller.get_user_info(
                     request.user
                 ),
+            },
+        )
+
+    def request_service_for_customer(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = ServiceRequestForCustomerForm(request.POST)
+            if form.is_valid():
+                try:
+                    service_request = form.save(self.controller)
+                    print(service_request)
+                    print(service_request.id)
+                    msg = "request sent"
+                    if service_request.status == RequestStatus.NO_EXPERT_FOUND:
+                        return redirect("/users")
+                    else:
+                        return redirect(
+                            f"/services/request/finding?request_id={service_request.id}"
+                        )
+                except RepeatedRequestException:
+                    msg = "یک درخواست از این نوع سرویس در حال انجام است."
+        else:
+            form = ServiceRequestForCustomerForm()
+        return render(
+            request=request,
+            template_name="services/request-service.html",
+            context={
+                "request_form": form,
+                "msg": msg,
+                "request_type": RequestType.SYSTEM_SELECTED,
+                "all_services_tree": self.controller.get_service_category_trees(),
             },
         )
 
@@ -258,9 +284,6 @@ class ServiceView:
                 return redirect("/services/list")
             messages.error(request, "Unsuccessful Edit Service Invalid information.")
             msg = form.errors
-        elif request.method == "delete":
-            service.delete()
-            return redirect("/services/list")
         else:
             form = ServiceForm(instance=service)
         return render(
@@ -273,6 +296,34 @@ class ServiceView:
                     request.user
                 ),
             },
+        )
+
+    def delete_service(self, request, service_id):
+        service = self.controller.get_service(service_id)
+        service.delete()
+        return redirect("/services/list")
+
+    def delete_request(self, request, request_id):
+        request = self.controller.get_request_by_id(request_id)
+        request.delete()
+        return redirect("/users")
+
+    def create_service(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = ServiceForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Service Added successful.")
+                return redirect("/services/list")
+            messages.error(request, "Unsuccessful Edit Service Invalid information.")
+            msg = form.errors
+        else:
+            form = ServiceForm()
+        return render(
+            request=request,
+            template_name="admin/service.html",
+            context={"form": form, "msg": msg},
         )
 
     def category(self, request, category_id):
@@ -288,9 +339,6 @@ class ServiceView:
                 return redirect("/services/categories")
             messages.error(request, "Unsuccessful Edit Category Invalid information.")
             msg = form.errors
-        elif request.method == "delete":
-            category.delete()
-            return redirect("categories")
         else:
             form = CategoryForm(instance=category)
         return render(
@@ -304,6 +352,28 @@ class ServiceView:
                 ),
             },
         )
+    def delete_category(self, request, category_id):
+        category = self.controller.get_category(category_id)
+        category.delete()
+        return redirect("/services/categories")
+
+    def create_category(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = CategoryForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Category successful.")
+                return redirect('/services/categories')
+            messages.error(request, "Unsuccessful Edit Category Invalid information.")
+            msg = form.errors
+        else:
+            form = CategoryForm()
+        return render(
+            request=request,
+            template_name="admin/category.html",
+            context={"form": form, "msg": msg},
+        )
 
     def limitations_list(self, request):
         from home_service.dependency_injection import dependency_injector
@@ -314,4 +384,57 @@ class ServiceView:
             context={
                 "limitations": limitations,
                 "object_name": dependency_injector.user_controller.get_user_info(request.user)},
+        )
+
+
+
+    def limitation(self, request, limitation_id):
+        from home_service.dependency_injection import dependency_injector
+
+        msg = ""
+        limitation = self.controller.get_limitation(limitation_id)
+        if request.method == "POST":
+            form = LimitationForm(request.POST, instance=limitation)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Limitation successful.")
+                return redirect("/services/limitations")
+            messages.error(request, "Unsuccessful Edit Limitation Invalid information.")
+            msg = form.errors
+        else:
+            form = LimitationForm(instance=limitation)
+        return render(
+            request=request,
+            template_name="admin/limitation.html",
+            context={
+                "form": form,
+                "msg": msg,
+                "object_name": dependency_injector.user_controller.get_user_info(
+                    request.user
+                ),
+            },
+        )
+
+    def delete_limitation(self, request, limitation_id):
+        limitation = self.controller.get_limitation(limitation_id)
+        limitation.delete()
+        return redirect("/services/limitations")
+    
+
+    def create_limitation(self, request):
+        msg = ""
+        if request.method == "POST":
+            form = LimitationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Edit Limitation successful.")
+                return redirect('/services/limitations')
+            messages.error(request, "Unsuccessful Edit Limitation Invalid information.")
+            msg = form.errors
+        else:
+            form = LimitationForm()
+        return render(
+            request=request,
+            template_name="admin/limitation.html",
+            context={"form": form, "msg": msg},
         )

@@ -21,9 +21,9 @@
                 </button>
                 <div class="dropdown-menu complete-rtl">
                     <a class="dropdown-item" href="profile/{{ user.id }}">ویرایش</a>
-                    <a class="dropdown-item">حذف</a>
+                    <a class="dropdown-item" href="profile/delete/{{ user.id }}">حذف</a>
                     {% if user.get_user_type_str == "expert" %}
-                    <a class="dropdown-item">تایید مدارک</a>
+                    <a class="dropdown-item" >تایید مدارک</a>
                     {% endif %}
                 </div>
             </td>
